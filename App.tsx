@@ -420,6 +420,15 @@ const App: React.FC = () => {
             onCashAction={handleCashAction} 
             currency={settings.currency} 
         />
+
+        {showTicket && (
+            <Ticket 
+                type={ticketType} 
+                data={ticketData} 
+                settings={settings} 
+                onClose={() => setShowTicket(false)} 
+            />
+        )}
         
         {isProductModalOpen && currentProduct && (
             <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fade-in">
