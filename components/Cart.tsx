@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { CartItem, StoreSettings, Customer, PaymentMethod, PaymentDetail } from '../types';
 import { Trash2, CreditCard, Banknote, Minus, Plus, ShoppingBag, X, Zap, Smartphone, Check, Wand2, ChevronDown } from 'lucide-react';

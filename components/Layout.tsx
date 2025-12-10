@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { ViewState, StoreSettings, UserProfile } from '../types';
 import { ShoppingCart, Archive, BarChart2, ShoppingBag, LogOut, User, FileText, Settings, Rocket } from 'lucide-react';

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { Product, Supplier, Purchase, PurchaseItem, StoreSettings } from '../types';
 import { Search, Plus, ScanBarcode, Save, Trash2, History, User, FileText, Package, Truck, Calendar, ChevronRight, Hash, DollarSign, Archive, Barcode, Check, X, Building2, ShoppingCart } from 'lucide-react';

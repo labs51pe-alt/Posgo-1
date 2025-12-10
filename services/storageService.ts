@@ -1,4 +1,3 @@
-
 import { UserProfile, Product, Transaction, Purchase, StoreSettings, Customer, Supplier, CashShift, CashMovement } from '../types';
 import { MOCK_PRODUCTS, DEFAULT_SETTINGS } from '../constants';
 import { supabase } from './supabase';

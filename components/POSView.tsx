@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { Product, ProductVariant, CartItem, Transaction } from '../types';
 import { CATEGORIES } from '../constants';
