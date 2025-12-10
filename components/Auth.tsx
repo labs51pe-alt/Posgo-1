@@ -3,7 +3,8 @@ import React, { useState, useEffect } from 'react';
 import { UserProfile } from '../types';
 import { 
   Rocket, ArrowRight, MessageSquare, CheckCircle, RefreshCw, 
-  Sparkles, ShieldAlert, Lock, Globe, ChevronDown, AlertCircle, PlayCircle
+  Sparkles, ShieldAlert, Lock, ChevronDown, AlertCircle, PlayCircle,
+  ShoppingBag, Package, BarChart3, Zap
 } from 'lucide-react';
 import { supabase } from '../services/supabase';
 
@@ -177,107 +178,133 @@ export const Auth: React.FC<AuthProps> = ({ onLogin }) => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col lg:flex-row font-inter overflow-hidden relative selection:bg-indigo-500 selection:text-white bg-white">
+    <div className="min-h-screen flex flex-col lg:flex-row font-inter overflow-hidden relative selection:bg-emerald-500 selection:text-white bg-white">
         
-        {/* LEFT PANEL: Corporate Minimalism */}
-        <div className="w-full lg:w-[55%] relative z-10 flex flex-col justify-center px-12 lg:px-24 py-12">
+        {/* LEFT PANEL: Compact & POS Focused */}
+        <div className="w-full lg:w-[55%] relative z-10 flex flex-col justify-center px-8 lg:px-20 py-8 bg-slate-50 overflow-hidden">
              
+             {/* Animated Blobs Background */}
+             <div className="absolute top-0 -left-4 w-64 h-64 bg-indigo-300 rounded-full mix-blend-multiply filter blur-3xl opacity-60 animate-blob"></div>
+             <div className="absolute top-0 -right-4 w-80 h-80 bg-emerald-200 rounded-full mix-blend-multiply filter blur-3xl opacity-60 animate-blob animation-delay-2000"></div>
+             <div className="absolute -bottom-8 left-20 w-72 h-72 bg-pink-200 rounded-full mix-blend-multiply filter blur-3xl opacity-60 animate-blob animation-delay-4000"></div>
+
              {/* Brand Header */}
-             <div className="flex items-center gap-2 mb-12">
-                 <div className="w-8 h-8 bg-slate-900 rounded-lg flex items-center justify-center">
-                     <Rocket className="w-4 h-4 text-white" />
+             <div className="relative z-10 flex items-center gap-3 mb-8">
+                 <div className="w-8 h-8 bg-slate-900 rounded-xl flex items-center justify-center shadow-lg transform -rotate-6">
+                     <Rocket className="w-4 h-4 text-emerald-400" />
                  </div>
-                 <span className="text-lg font-black text-slate-900 tracking-tight">PosGo!</span>
+                 <span className="text-lg font-black text-slate-900 tracking-tight font-sans">GaorSystem</span>
              </div>
 
              {/* Main Content */}
-             <div className="max-w-2xl animate-fade-in-up">
+             <div className="relative z-10 max-w-xl animate-fade-in-up">
                  {/* The Pill */}
-                 <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-50 border border-indigo-100 mb-8">
-                     <div className="w-2 h-2 rounded-full bg-indigo-600 animate-pulse"></div>
-                     <span className="text-[10px] font-black text-indigo-700 uppercase tracking-widest">GaorSystem Workspace</span>
+                 <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/80 backdrop-blur-md border border-emerald-100 mb-6 shadow-sm">
+                     <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+                     <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest font-sans">SISTEMA PUNTO DE VENTA</span>
                  </div>
 
                  {/* The Headline */}
-                 <h1 className="text-6xl lg:text-7xl font-black text-slate-900 leading-[1.05] mb-8 tracking-tight">
-                     Software que <br/>
-                     <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-600 to-indigo-600">impulsa tu éxito.</span>
+                 <h1 className="text-4xl lg:text-6xl font-black text-slate-900 leading-[1.05] mb-6 tracking-tight font-sans">
+                     Gestiona tu <span className="text-indigo-600">Negocio</span><br/>
+                     y Vende <span className="text-emerald-500">Sin Límites.</span>
                  </h1>
 
-                 <p className="text-xl text-slate-500 font-medium leading-relaxed max-w-lg mb-12">
-                     Control de inventario, ventas y facturación en una plataforma diseñada para escalar.
-                 </p>
-
-                 {/* Social Proof / Trust */}
-                 <div className="flex items-center gap-8 border-t border-slate-100 pt-8">
-                     <div>
-                         <p className="text-3xl font-black text-slate-900">10k+</p>
-                         <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Negocios</p>
-                     </div>
-                     <div className="h-10 w-px bg-slate-200"></div>
-                     <div>
-                         <p className="text-3xl font-black text-slate-900">99.9%</p>
-                         <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Uptime</p>
-                     </div>
-                     <div className="flex-1 flex justify-end">
-                         <button onClick={() => window.open('https://gaorsystem.vercel.app/', '_blank')} className="flex items-center gap-2 text-sm font-bold text-indigo-600 hover:text-indigo-800 transition-colors group">
-                             Conoce más de Gaor <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform"/>
-                         </button>
-                     </div>
+                 {/* Benefits List (Compact) */}
+                 <div className="grid grid-cols-1 gap-4 mb-8">
+                    <div className="flex items-center gap-3 group">
+                        <div className="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
+                            <Zap className="w-5 h-5 fill-current"/>
+                        </div>
+                        <div>
+                            <h3 className="font-bold text-slate-800 text-base">Ventas Rápidas</h3>
+                            <p className="text-xs text-slate-500">Facturación ágil en segundos.</p>
+                        </div>
+                    </div>
+                    <div className="flex items-center gap-3 group">
+                        <div className="w-10 h-10 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
+                            <Package className="w-5 h-5"/>
+                        </div>
+                        <div>
+                             <h3 className="font-bold text-slate-800 text-base">Control de Inventarios</h3>
+                             <p className="text-xs text-slate-500">Gestión de stock eficiente.</p>
+                        </div>
+                    </div>
+                    <div className="flex items-center gap-3 group">
+                        <div className="w-10 h-10 rounded-xl bg-pink-100 text-pink-500 flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
+                            <BarChart3 className="w-5 h-5"/>
+                        </div>
+                        <div>
+                             <h3 className="font-bold text-slate-800 text-base">Reportes</h3>
+                             <p className="text-xs text-slate-500">Visualiza tus ganancias y métricas.</p>
+                        </div>
+                    </div>
                  </div>
+             </div>
+
+             {/* Floating 3D Elements (Adjusted) */}
+             <div className="absolute top-[15%] right-[5%] animate-float pointer-events-none opacity-80 scale-90">
+                <div className="bg-white p-3 rounded-2xl shadow-[0_20px_40px_rgba(0,0,0,0.08)] border border-emerald-100/50 backdrop-blur-sm">
+                    <ShoppingBag className="w-10 h-10 text-emerald-500 stroke-[1.5]"/>
+                </div>
+             </div>
+             <div className="absolute bottom-[25%] right-[10%] animate-float pointer-events-none scale-90" style={{animationDelay: '1s'}}>
+                <div className="bg-white p-3 rounded-2xl shadow-[0_20px_40px_rgba(0,0,0,0.08)] border border-indigo-100/50 backdrop-blur-sm">
+                    <Package className="w-8 h-8 text-indigo-500 stroke-[1.5]"/>
+                </div>
              </div>
         </div>
 
-        {/* RIGHT PANEL: Minimalist Login Form */}
-        <div className="w-full lg:w-[45%] bg-slate-50/50 border-l border-slate-100 flex flex-col justify-center items-center p-8 lg:p-16 relative">
-            <div className="w-full max-w-[400px]">
+        {/* RIGHT PANEL: Login Form */}
+        <div className="w-full lg:w-[45%] bg-white/50 backdrop-blur-xl border-l border-slate-100 flex flex-col justify-center items-center p-8 relative">
+            <div className="w-full max-w-[380px]">
                 
                 {/* Mobile Logo */}
-                <div className="lg:hidden flex justify-center mb-8">
-                    <button onClick={handleLogoClick} className="w-16 h-16 bg-slate-900 rounded-2xl flex items-center justify-center">
-                        <Rocket className="w-8 h-8 text-white"/>
+                <div className="lg:hidden flex justify-center mb-6">
+                    <button onClick={handleLogoClick} className="w-14 h-14 bg-slate-900 rounded-2xl flex items-center justify-center">
+                        <Rocket className="w-7 h-7 text-emerald-400"/>
                     </button>
                 </div>
 
-                <div className="mb-10">
-                    <h2 className="text-2xl font-black text-slate-900 mb-2">
-                        {activeTab === 'CLIENT' ? 'Iniciar Sesión' : 'Solicitar Demo'}
+                <div className="mb-8 text-center lg:text-left">
+                    <h2 className="text-2xl font-black text-slate-900 mb-1 font-sans">
+                        {activeTab === 'CLIENT' ? 'Bienvenido de nuevo' : 'Prueba Gaor POS'}
                     </h2>
-                    <p className="text-slate-500">
-                        {activeTab === 'CLIENT' ? 'Accede a tu panel de control.' : 'Prueba el sistema gratis hoy.'}
+                    <p className="text-slate-500 font-sans text-sm">
+                        {activeTab === 'CLIENT' ? 'Ingresa tus credenciales para continuar.' : 'Acceso instantáneo para evaluación.'}
                     </p>
                 </div>
 
                 {/* Clean Tabs */}
-                <div className="flex gap-6 mb-8 border-b border-slate-200 pb-1">
+                <div className="flex gap-6 mb-6 border-b border-slate-200 pb-1 font-sans">
                     <button 
                         onClick={() => handleTabSwitch('CLIENT')}
-                        className={`pb-3 text-sm font-bold transition-all relative ${activeTab === 'CLIENT' ? 'text-indigo-600' : 'text-slate-400 hover:text-slate-600'}`}
+                        className={`pb-2 text-sm font-bold transition-all relative ${activeTab === 'CLIENT' ? 'text-indigo-600' : 'text-slate-400 hover:text-slate-600'}`}
                     >
                         Soy Cliente
                         {activeTab === 'CLIENT' && <div className="absolute bottom-0 left-0 w-full h-0.5 bg-indigo-600 rounded-t-full"></div>}
                     </button>
                     <button 
                         onClick={() => handleTabSwitch('DEMO')}
-                        className={`pb-3 text-sm font-bold transition-all relative ${activeTab === 'DEMO' ? 'text-indigo-600' : 'text-slate-400 hover:text-slate-600'}`}
+                        className={`pb-2 text-sm font-bold transition-all relative ${activeTab === 'DEMO' ? 'text-emerald-500' : 'text-slate-400 hover:text-slate-600'}`}
                     >
                         Quiero Probar
-                        {activeTab === 'DEMO' && <div className="absolute bottom-0 left-0 w-full h-0.5 bg-indigo-600 rounded-t-full"></div>}
+                        {activeTab === 'DEMO' && <div className="absolute bottom-0 left-0 w-full h-0.5 bg-emerald-500 rounded-t-full"></div>}
                     </button>
                 </div>
 
                 {/* Form */}
-                <div className="min-h-[240px]">
+                <div className="min-h-[220px]">
                    {loginStep === 'PHONE' ? (
-                    <form onSubmit={handleSendCode} className="space-y-6 animate-fade-in">
-                        <div className="space-y-2">
-                             <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+                    <form onSubmit={handleSendCode} className="space-y-5 animate-fade-in font-sans">
+                        <div className="space-y-1.5">
+                             <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
                                 {activeTab === 'CLIENT' ? 'Número de Celular' : 'WhatsApp de Contacto'}
                              </label>
                              
-                             <div className={`flex items-center gap-3 bg-white border border-slate-200 rounded-xl p-3 transition-all ${validationError ? 'border-red-300 ring-2 ring-red-50' : 'focus-within:border-indigo-500 focus-within:ring-2 focus-within:ring-indigo-50'}`}>
+                             <div className={`flex items-center gap-2 bg-white border border-slate-200 rounded-xl p-2.5 transition-all ${validationError ? 'border-red-300 ring-2 ring-red-50' : 'focus-within:border-indigo-500 focus-within:ring-2 focus-within:ring-indigo-50'}`}>
                                 {/* Country */}
-                                <div className="relative pl-1 pr-3 border-r border-slate-100">
+                                <div className="relative pl-1 pr-2 border-r border-slate-100">
                                     <select 
                                         value={countryCode}
                                         onChange={(e) => setCountryCode(e.target.value)}
@@ -288,7 +315,7 @@ export const Auth: React.FC<AuthProps> = ({ onLogin }) => {
                                         ))}
                                     </select>
                                     <div className="flex items-center gap-1 cursor-pointer">
-                                        <span className="text-2xl">{currentCountry?.flag}</span>
+                                        <span className="text-xl">{currentCountry?.flag}</span>
                                         <ChevronDown className="w-3 h-3 text-slate-400"/>
                                     </div>
                                 </div>
@@ -298,14 +325,14 @@ export const Auth: React.FC<AuthProps> = ({ onLogin }) => {
                                     value={phoneNumber}
                                     onChange={(e) => setPhoneNumber(e.target.value.replace(/\D/g, ''))}
                                     maxLength={currentCountry.length}
-                                    className="w-full bg-transparent outline-none font-bold text-lg text-slate-800 placeholder:text-slate-300 h-8"
+                                    className="w-full bg-transparent outline-none font-bold text-base text-slate-800 placeholder:text-slate-300 h-8"
                                     placeholder={currentCountry.placeholder}
                                     autoFocus
                                 />
                              </div>
                              
                              {validationError && (
-                                 <div className="flex items-center gap-2 text-red-500 text-xs font-bold animate-fade-in mt-1">
+                                 <div className="flex items-center gap-2 text-red-500 text-[10px] font-bold animate-fade-in mt-1">
                                      <AlertCircle className="w-3 h-3"/> {validationError}
                                  </div>
                              )}
@@ -314,7 +341,7 @@ export const Auth: React.FC<AuthProps> = ({ onLogin }) => {
                         <button
                             type="submit"
                             disabled={loading}
-                            className="w-full py-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold text-sm shadow-lg shadow-indigo-100 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed group active:scale-95"
+                            className={`w-full py-3.5 text-white rounded-xl font-bold text-sm shadow-lg transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed group active:scale-95 ${activeTab === 'DEMO' ? 'bg-emerald-500 hover:bg-emerald-600 shadow-emerald-200' : 'bg-indigo-600 hover:bg-indigo-700 shadow-indigo-200'}`}
                         >
                             {loading ? <RefreshCw className="w-5 h-5 animate-spin"/> : (
                                 <>
@@ -325,33 +352,33 @@ export const Auth: React.FC<AuthProps> = ({ onLogin }) => {
                         </button>
                         
                         {activeTab === 'DEMO' && (
-                            <div className="flex items-center justify-center gap-2 text-xs text-slate-400 font-medium">
-                                <PlayCircle className="w-4 h-4"/> Sin tarjeta de crédito
+                            <div className="flex items-center justify-center gap-2 text-[10px] text-slate-400 font-medium">
+                                <PlayCircle className="w-3.5 h-3.5"/> Sin tarjeta de crédito
                             </div>
                         )}
                     </form>
                    ) : (
-                    <form onSubmit={handleVerifyOtp} className="space-y-6 animate-fade-in">
+                    <form onSubmit={handleVerifyOtp} className="space-y-5 animate-fade-in font-sans">
                         <div className="text-center">
-                            <div className="w-12 h-12 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center mx-auto mb-4">
-                                <MessageSquare className="w-6 h-6 fill-current"/>
+                            <div className="w-10 h-10 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto mb-3">
+                                <MessageSquare className="w-5 h-5 fill-current"/>
                             </div>
-                            <h3 className="font-bold text-slate-900 text-lg mb-1">Código de Verificación</h3>
-                            <p className="text-sm text-slate-500">
+                            <h3 className="font-bold text-slate-900 text-base mb-1">Código de Verificación</h3>
+                            <p className="text-xs text-slate-500">
                                 Enviado a <span className="font-bold text-slate-900">{countryCode} {phoneNumber}</span>
                             </p>
-                            <button type="button" onClick={() => setLoginStep('PHONE')} className="text-xs font-bold text-indigo-600 hover:underline mt-2">
+                            <button type="button" onClick={() => setLoginStep('PHONE')} className="text-[10px] font-bold text-indigo-600 hover:underline mt-2">
                                 Cambiar número
                             </button>
                         </div>
                         
-                        <div className="flex justify-center my-4">
+                        <div className="flex justify-center my-2">
                             <input
                                 type="text"
                                 maxLength={6}
                                 value={otpCode}
                                 onChange={(e) => setOtpCode(e.target.value)}
-                                className="w-full text-center bg-white border border-slate-200 rounded-xl py-4 font-black text-3xl tracking-[0.5em] text-slate-800 outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-50 transition-all placeholder:text-slate-200"
+                                className="w-full text-center bg-white border border-slate-200 rounded-xl py-3 font-black text-2xl tracking-[0.5em] text-slate-800 outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-50 transition-all placeholder:text-slate-200"
                                 placeholder="000000"
                                 autoFocus
                             />
@@ -360,7 +387,7 @@ export const Auth: React.FC<AuthProps> = ({ onLogin }) => {
                         <button
                             type="submit"
                             disabled={loading || otpCode.length < 4}
-                            className="w-full py-4 bg-slate-900 hover:bg-black text-white rounded-xl font-bold text-sm shadow-xl transition-all flex items-center justify-center gap-2 disabled:opacity-50 active:scale-95"
+                            className="w-full py-3.5 bg-slate-900 hover:bg-black text-white rounded-xl font-bold text-sm shadow-xl transition-all flex items-center justify-center gap-2 disabled:opacity-50 active:scale-95"
                         >
                             {loading ? <RefreshCw className="w-5 h-5 animate-spin"/> : <>Validar e Ingresar <CheckCircle className="w-5 h-5"/></>}
                         </button>
@@ -368,11 +395,11 @@ export const Auth: React.FC<AuthProps> = ({ onLogin }) => {
                    )}
                 </div>
 
-                <div className="mt-12 text-center">
-                    <div className="flex items-center justify-center gap-2 text-[10px] font-black text-slate-300 uppercase tracking-widest">
+                <div className="mt-8 text-center">
+                    <div className="flex items-center justify-center gap-2 text-[10px] font-black text-slate-300 uppercase tracking-widest font-sans">
                         <span>Powered by</span>
-                        <a href="https://gaorsystem.vercel.app/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-slate-400 hover:text-indigo-600 transition-colors">
-                            <Globe className="w-3 h-3"/> GaorSystemPeru
+                        <a href="https://gaorsystem.vercel.app/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-slate-400 hover:text-emerald-500 transition-colors">
+                            <Rocket className="w-3 h-3"/> GaorSystemPeru
                         </a>
                     </div>
                 </div>
@@ -381,7 +408,7 @@ export const Auth: React.FC<AuthProps> = ({ onLogin }) => {
 
         {/* GOD MODE MODAL (Hidden) */}
         {showGodMode && (
-             <div className="fixed inset-0 bg-white/90 backdrop-blur-md z-[100] flex items-center justify-center p-6 animate-fade-in">
+             <div className="fixed inset-0 bg-white/90 backdrop-blur-md z-[100] flex items-center justify-center p-6 animate-fade-in font-sans">
                  <div className="bg-white w-full max-w-sm rounded-2xl p-8 shadow-2xl animate-fade-in-up text-center border border-slate-200">
                      <div className="w-16 h-16 bg-red-50 rounded-2xl flex items-center justify-center mx-auto mb-6">
                          <ShieldAlert className="w-8 h-8 text-red-600"/>

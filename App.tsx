@@ -410,6 +410,8 @@ const App: React.FC = () => {
             )}
         </Layout>
 
+        {/* --- MODALS OUTSIDE LAYOUT (Z-INDEX FIX) --- */}
+        
         <OnboardingTour isOpen={showOnboarding} onComplete={() => setShowOnboarding(false)} />
 
         <CashControlModal 

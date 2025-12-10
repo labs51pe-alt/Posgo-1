@@ -23,7 +23,6 @@
                 900: '#134e4a',
               },
               indigo: {
-                // Slightly deeper indigo for better contrast with the bright green
                 50: '#eef2ff',
                 100: '#e0e7ff',
                 200: '#c7d2fe',
@@ -38,6 +37,25 @@
             },
             fontFamily: {
               sans: ['Ubuntu Sans', 'sans-serif'],
+            },
+            animation: {
+              blob: "blob 7s infinite",
+              'fade-in': 'fade-in 0.4s ease-out forwards',
+              'fade-in-up': 'fade-in-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+              float: 'float 6s ease-in-out infinite',
+              shimmer: 'shimmer 2.5s infinite',
+            },
+            keyframes: {
+              blob: {
+                "0%": { transform: "translate(0px, 0px) scale(1)" },
+                "33%": { transform: "translate(30px, -50px) scale(1.1)" },
+                "66%": { transform: "translate(-20px, 20px) scale(0.9)" },
+                "100%": { transform: "translate(0px, 0px) scale(1)" }
+              },
+              "fade-in": { from: { opacity: 0 } , to: { opacity: 1 } },
+              "fade-in-up": { from: { opacity: 0, transform: "translateY(20px)" }, to: { opacity: 1, transform: "translateY(0)" } },
+              float: { "0%": { transform: "translateY(0px)" }, "50%": { transform: "translateY(-10px)" }, "100%": { transform: "translateY(0px)" } },
+              shimmer: { "0%": { transform: "translateX(-100%)" }, "100%": { transform: "translateX(100%)" } }
             }
           }
         }
@@ -50,12 +68,9 @@
       /* GAOR SYSTEM CORPORATE AESTHETIC */
       body { 
         font-family: 'Ubuntu Sans', sans-serif; 
-        background-color: #ffffff; /* Clean White Base */
-        color: #0f172a; /* Slate 900 */
+        background-color: #ffffff; 
+        color: #0f172a; 
         overflow-x: hidden;
-        /* Subtle top glow instead of full aurora */
-        background-image: radial-gradient(circle at 50% 0%, rgba(99, 102, 241, 0.08) 0%, transparent 40%);
-        background-repeat: no-repeat;
       }
 
       /* Custom Scrollbar */
@@ -64,17 +79,8 @@
       .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 20px; }
       .custom-scrollbar::-webkit-scrollbar-thumb:hover { background-color: #94a3b8; }
       
-      /* Animations */
-      @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
-      @keyframes fade-in-up { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-      @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-10px); } 100% { transform: translateY(0px); } }
-      @keyframes shimmer { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
-
-      .animate-fade-in { animation: fade-in 0.4s ease-out forwards; }
-      .animate-fade-in-up { animation: fade-in-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-      .animate-float { animation: float 6s ease-in-out infinite; }
-      .animate-shimmer { animation: shimmer 2.5s infinite; }
-      
+      .animation-delay-2000 { animation-delay: 2s; }
+      .animation-delay-4000 { animation-delay: 4s; }
     </style>
   <script type="importmap">
 {
