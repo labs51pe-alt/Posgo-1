@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useMemo } from 'react';
 import { ViewState, Product, CartItem, Transaction, StoreSettings, Purchase, CashShift, CashMovement, UserProfile, Customer, Supplier } from './types';
 import { StorageService } from './services/storageService';
@@ -317,99 +316,101 @@ const App: React.FC = () => {
   if (!user) return <Auth onLogin={handleLogin} />;
 
   return (
-    <Layout currentView={view} onChangeView={setView} settings={settings} user={user} onLogout={handleLogout}>
-        <OnboardingTour isOpen={showOnboarding} onComplete={() => setShowOnboarding(false)} />
-        
-        {view === ViewState.POS && (
-            <POSView 
-                products={products} 
-                cart={cart} 
+    <>
+        <Layout currentView={view} onChangeView={setView} settings={settings} user={user} onLogout={handleLogout}>
+            {view === ViewState.POS && (
+                <POSView 
+                    products={products} 
+                    cart={cart} 
+                    transactions={transactions} 
+                    activeShift={activeShift} 
+                    settings={settings} 
+                    customers={customers} 
+                    onAddToCart={handleAddToCart} 
+                    onUpdateCart={handleUpdateCartQuantity} 
+                    onRemoveFromCart={handleRemoveFromCart} 
+                    onUpdateDiscount={handleUpdateDiscount} 
+                    onCheckout={handleCheckout} 
+                    onClearCart={() => setCart([])} 
+                    onOpenCashControl={(action: 'OPEN'|'IN'|'OUT'|'CLOSE') => setShowCashControl(true)} 
+                />
+            )}
+
+            {view === ViewState.INVENTORY && (
+                <InventoryView 
+                    products={products} 
+                    settings={settings} 
+                    transactions={transactions}
+                    purchases={purchases}
+                    onNewProduct={() => { 
+                        setCurrentProduct({ id: '', name: '', price: 0, category: CATEGORIES[0], stock: 0, variants: [] }); 
+                        setIsProductModalOpen(true); 
+                    }} 
+                    onEditProduct={(p) => { 
+                        setCurrentProduct(p); 
+                        setIsProductModalOpen(true); 
+                    }} 
+                    onDeleteProduct={(id) => { 
+                        if(window.confirm('¿Estás seguro de eliminar este producto?')) { 
+                            const up = products.filter(p => p.id !== id); 
+                            setProducts(up); 
+                            StorageService.saveProducts(up); 
+                        } 
+                    }} 
+                    onGoToPurchase={handleGoToPurchase}
+                />
+            )}
+            
+            {view === ViewState.PURCHASES && (
+                <PurchasesView 
+                    products={products}
+                    suppliers={suppliers}
+                    purchases={purchases}
+                    settings={settings}
+                    onProcessPurchase={handleProcessPurchase}
+                    onAddSupplier={handleAddSupplier}
+                    onRequestNewProduct={(barcode) => {
+                        setCurrentProduct({ 
+                            id: '', 
+                            name: '', 
+                            price: 0, 
+                            category: CATEGORIES[0], 
+                            stock: 0, 
+                            variants: [], 
+                            barcode: barcode || '' 
+                        });
+                        setIsProductModalOpen(true);
+                    }}
+                    initialSearchTerm={initialPurchaseSearch}
+                    onClearInitialSearch={() => setInitialPurchaseSearch('')}
+                />
+            )}
+
+            {view === ViewState.ADMIN && (
+                <AdminView 
                 transactions={transactions} 
-                activeShift={activeShift} 
-                settings={settings} 
-                customers={customers} 
-                onAddToCart={handleAddToCart} 
-                onUpdateCart={handleUpdateCartQuantity} 
-                onRemoveFromCart={handleRemoveFromCart} 
-                onUpdateDiscount={handleUpdateDiscount} 
-                onCheckout={handleCheckout} 
-                onClearCart={() => setCart([])} 
-                onOpenCashControl={(action: 'OPEN'|'IN'|'OUT'|'CLOSE') => setShowCashControl(true)} 
-            />
-        )}
-
-        {view === ViewState.INVENTORY && (
-            <InventoryView 
                 products={products} 
-                settings={settings} 
-                transactions={transactions}
-                purchases={purchases}
-                onNewProduct={() => { 
-                    setCurrentProduct({ id: '', name: '', price: 0, category: CATEGORIES[0], stock: 0, variants: [] }); 
-                    setIsProductModalOpen(true); 
-                }} 
-                onEditProduct={(p) => { 
-                    setCurrentProduct(p); 
-                    setIsProductModalOpen(true); 
-                }} 
-                onDeleteProduct={(id) => { 
-                    if(window.confirm('¿Estás seguro de eliminar este producto?')) { 
-                        const up = products.filter(p => p.id !== id); 
-                        setProducts(up); 
-                        StorageService.saveProducts(up); 
-                    } 
-                }} 
-                onGoToPurchase={handleGoToPurchase}
-            />
-        )}
-        
-        {view === ViewState.PURCHASES && (
-            <PurchasesView 
-                products={products}
-                suppliers={suppliers}
-                purchases={purchases}
-                settings={settings}
-                onProcessPurchase={handleProcessPurchase}
-                onAddSupplier={handleAddSupplier}
-                onRequestNewProduct={(barcode) => {
-                    setCurrentProduct({ 
-                        id: '', 
-                        name: '', 
-                        price: 0, 
-                        category: CATEGORIES[0], 
-                        stock: 0, 
-                        variants: [], 
-                        barcode: barcode || '' 
-                    });
-                    setIsProductModalOpen(true);
-                }}
-                initialSearchTerm={initialPurchaseSearch}
-                onClearInitialSearch={() => setInitialPurchaseSearch('')}
-            />
-        )}
+                shifts={shifts} 
+                movements={movements} 
+                />
+            )}
 
-        {view === ViewState.ADMIN && (
-            <AdminView 
-              transactions={transactions} 
-              products={products} 
-              shifts={shifts} 
-              movements={movements} 
-            />
-        )}
+            {view === ViewState.REPORTS && (
+                <ReportsView 
+                    transactions={transactions}
+                    settings={settings}
+                />
+            )}
 
-        {view === ViewState.REPORTS && (
-            <ReportsView 
-                transactions={transactions}
-                settings={settings}
-            />
-        )}
+            {view === ViewState.SETTINGS && (
+                <SettingsView 
+                    settings={settings}
+                    onSaveSettings={handleUpdateSettings}
+                />
+            )}
+        </Layout>
 
-        {view === ViewState.SETTINGS && (
-            <SettingsView 
-                settings={settings}
-                onSaveSettings={handleUpdateSettings}
-            />
-        )}
+        <OnboardingTour isOpen={showOnboarding} onComplete={() => setShowOnboarding(false)} />
 
         <CashControlModal 
             isOpen={showCashControl} 
@@ -431,7 +432,7 @@ const App: React.FC = () => {
         )}
         
         {isProductModalOpen && currentProduct && (
-            <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fade-in">
+            <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[120] flex items-center justify-center p-4 animate-fade-in">
                 <div className="bg-white rounded-[2rem] shadow-2xl w-full max-w-2xl overflow-hidden max-h-[90vh] flex flex-col animate-fade-in-up">
                     <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
                         <h2 className="font-black text-xl text-slate-800">{currentProduct.id ? 'Editar Producto' : 'Nuevo Producto'}</h2>
@@ -512,7 +513,7 @@ const App: React.FC = () => {
                 </div>
             </div>
         )}
-    </Layout>
+    </>
   );
 };
 
