@@ -110,7 +110,7 @@ export const PurchasesView: React.FC<PurchasesViewProps> = ({
     const handleSaveSupplier = () => {
         if (!newSupplierName) return;
         const newSup: Supplier = {
-            id: Date.now().toString(),
+            id: crypto.randomUUID(),
             name: newSupplierName,
             contact: newSupplierContact
         };
@@ -134,7 +134,7 @@ export const PurchasesView: React.FC<PurchasesViewProps> = ({
         }));
 
         const purchase: Purchase = {
-            id: Date.now().toString(),
+            id: crypto.randomUUID(),
             date: new Date().toISOString(),
             supplierId: selectedSupplierId,
             total,

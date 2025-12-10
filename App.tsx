@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useMemo } from 'react';
 import { ViewState, Product, CartItem, Transaction, StoreSettings, Purchase, CashShift, CashMovement, UserProfile, Customer, Supplier } from './types';
 import { StorageService } from './services/storageService';
@@ -14,12 +15,13 @@ import { SettingsView } from './components/SettingsView';
 import { CashControlModal } from './components/CashControlModal';
 import { POSView } from './components/POSView';
 import { DEFAULT_SETTINGS, CATEGORIES } from './constants';
-import { Plus, LogOut } from 'lucide-react';
+import { Plus } from 'lucide-react';
 
 const App: React.FC = () => {
   const [user, setUser] = useState<UserProfile | null>(null);
   const [view, setView] = useState<ViewState>(ViewState.POS);
   const [showOnboarding, setShowOnboarding] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   // Data
   const [products, setProducts] = useState<Product[]>([]);
@@ -47,47 +49,81 @@ const App: React.FC = () => {
   const [variantPrice, setVariantPrice] = useState('');
   const [variantStock, setVariantStock] = useState('');
 
-  // Initial Load
+  // Initial Load (Async)
   useEffect(() => {
-    const savedUser = StorageService.getSession();
-    if (savedUser) { 
-        setUser(savedUser); 
-        if (savedUser.role === 'admin') setView(ViewState.ADMIN); 
-    }
-    setProducts(StorageService.getProducts());
-    setTransactions(StorageService.getTransactions());
-    setPurchases(StorageService.getPurchases());
-    setSettings(StorageService.getSettings());
-    setCustomers(StorageService.getCustomers());
-    setSuppliers(StorageService.getSuppliers());
-    setShifts(StorageService.getShifts());
-    setMovements(StorageService.getMovements());
-    setActiveShiftId(StorageService.getActiveShiftId());
+    const initApp = async () => {
+        setLoading(true);
+        const savedUser = StorageService.getSession();
+        if (savedUser) { 
+            setUser(savedUser); 
+            if (savedUser.role === 'admin') setView(ViewState.ADMIN);
+            
+            // Load Data Async
+            const [p, t, pur, set, c, sup, sh, mov] = await Promise.all([
+                StorageService.getProducts(),
+                StorageService.getTransactions(),
+                StorageService.getPurchases(),
+                StorageService.getSettings(),
+                StorageService.getCustomers(),
+                StorageService.getSuppliers(),
+                StorageService.getShifts(),
+                StorageService.getMovements()
+            ]);
+            
+            setProducts(p);
+            setTransactions(t);
+            setPurchases(pur);
+            setSettings(set);
+            setCustomers(c);
+            setSuppliers(sup);
+            setShifts(sh);
+            setMovements(mov);
+            setActiveShiftId(StorageService.getActiveShiftId());
+        } else {
+             // Load Mock/Demo data if needed or just empty
+             setProducts(await StorageService.getProducts());
+        }
+        setLoading(false);
+    };
+    initApp();
   }, []);
 
   const activeShift = useMemo(() => shifts.find(s => s.id === activeShiftId), [shifts, activeShiftId]);
 
   // Handlers
-  const handleLogin = (loggedInUser: UserProfile) => {
+  const handleLogin = async (loggedInUser: UserProfile) => {
+    setUser(loggedInUser); 
+    StorageService.saveSession(loggedInUser);
+
     // === DEMO MODE RESET LOGIC ===
     if (loggedInUser.id === 'test-user-demo') {
         StorageService.resetDemoData();
-        // Reload all data from storage to ensure clean slate
-        setProducts(StorageService.getProducts());
-        setTransactions(StorageService.getTransactions());
-        setPurchases(StorageService.getPurchases());
-        setSettings(StorageService.getSettings());
-        setCustomers(StorageService.getCustomers());
-        setSuppliers(StorageService.getSuppliers());
-        setShifts(StorageService.getShifts());
-        setMovements(StorageService.getMovements());
-        setActiveShiftId(null);
-        setCart([]); // Clear any potential cart memory
         setTimeout(() => setShowOnboarding(true), 500); 
     }
 
-    setUser(loggedInUser); 
-    StorageService.saveSession(loggedInUser);
+    // Refresh Data based on user type
+    setLoading(true);
+    const [p, t, pur, set, c, sup, sh, mov] = await Promise.all([
+        StorageService.getProducts(),
+        StorageService.getTransactions(),
+        StorageService.getPurchases(),
+        StorageService.getSettings(),
+        StorageService.getCustomers(),
+        StorageService.getSuppliers(),
+        StorageService.getShifts(),
+        StorageService.getMovements()
+    ]);
+    
+    setProducts(p);
+    setTransactions(t);
+    setPurchases(pur);
+    setSettings(set);
+    setCustomers(c);
+    setSuppliers(sup);
+    setShifts(sh);
+    setMovements(mov);
+    setActiveShiftId(StorageService.getActiveShiftId());
+    setLoading(false);
     
     if (loggedInUser.role === 'admin') {
         setView(ViewState.ADMIN);
@@ -96,9 +132,9 @@ const App: React.FC = () => {
     }
   };
 
-  const handleLogout = () => { 
+  const handleLogout = async () => { 
+      await StorageService.clearSession(); 
       setUser(null); 
-      StorageService.clearSession(); 
       setView(ViewState.POS); 
       setCart([]); 
   };
@@ -148,7 +184,7 @@ const App: React.FC = () => {
       let tax = settings.pricesIncludeTax ? (total - (total / (1 + settings.taxRate))) : (total * settings.taxRate);
       
       const transaction: Transaction = { 
-          id: Date.now().toString(), 
+          id: crypto.randomUUID(), 
           date: new Date().toISOString(), 
           items: [...cart], 
           subtotal: settings.pricesIncludeTax ? (total - tax) : total, 
@@ -192,7 +228,7 @@ const App: React.FC = () => {
   const handleCashAction = (action: 'OPEN' | 'CLOSE' | 'IN' | 'OUT', amount: number, description: string) => {
       if (action === 'OPEN') {
           const newShift: CashShift = { 
-              id: Date.now().toString(), 
+              id: crypto.randomUUID(), 
               startTime: new Date().toISOString(), 
               startAmount: amount, 
               status: 'OPEN', 
@@ -219,12 +255,12 @@ const App: React.FC = () => {
       }
       
       if (activeShift || action === 'OPEN') {
-          const currentId = activeShift ? activeShift.id : (action === 'OPEN' ? (shifts[0]?.id || Date.now().toString()) : ''); 
-          const actualId = action === 'OPEN' ? shifts[0]?.id || Date.now().toString() : currentId;
+          const currentId = activeShift ? activeShift.id : (shifts.length > 0 ? shifts[0].id : '');
+          const actualId = action === 'OPEN' ? shifts[0]?.id : currentId;
           
           if(actualId) { 
               const move: CashMovement = { 
-                  id: Date.now().toString(), 
+                  id: crypto.randomUUID(), 
                   shiftId: actualId, 
                   type: action, 
                   amount, 
@@ -241,9 +277,14 @@ const App: React.FC = () => {
       if (!currentProduct?.name) return;
       let pToSave = { ...currentProduct };
       if (pToSave.hasVariants && pToSave.variants) pToSave.stock = pToSave.variants.reduce((acc, v) => acc + (Number(v.stock) || 0), 0);
+      
+      // If new, generate valid UUID
+      if(!pToSave.id) pToSave.id = crypto.randomUUID();
+
       let updated; 
       if (products.find(p => p.id === pToSave.id)) updated = products.map(p => p.id === pToSave.id ? pToSave : p); 
-      else updated = [...products, { ...pToSave, id: Date.now().toString() }];
+      else updated = [...products, pToSave];
+
       setProducts(updated); 
       StorageService.saveProducts(updated); 
       setIsProductModalOpen(false);
@@ -271,6 +312,8 @@ const App: React.FC = () => {
       setView(ViewState.PURCHASES);
   };
 
+  if (loading) return <div className="h-screen flex items-center justify-center bg-slate-50"><div className="w-10 h-10 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div></div>;
+
   if (!user) return <Auth onLogin={handleLogin} />;
 
   return (
@@ -281,7 +324,7 @@ const App: React.FC = () => {
             <POSView 
                 products={products} 
                 cart={cart} 
-                transactions={transactions} // Passed to calculate live shift sales
+                transactions={transactions} 
                 activeShift={activeShift} 
                 settings={settings} 
                 customers={customers} 
@@ -430,7 +473,7 @@ const App: React.FC = () => {
                                         <input className="w-20 p-3 rounded-xl border border-slate-200 text-sm font-bold" placeholder="Cant." type="number" value={variantStock} onChange={e => setVariantStock(e.target.value)}/>
                                         <button onClick={() => { 
                                             if(!currentProduct) return; 
-                                            const newVar = { id: Date.now().toString(), name: variantName, price: parseFloat(variantPrice) || 0, stock: parseFloat(variantStock) || 0 }; 
+                                            const newVar = { id: crypto.randomUUID(), name: variantName, price: parseFloat(variantPrice) || 0, stock: parseFloat(variantStock) || 0 }; 
                                             const newVars = [...(currentProduct.variants || []), newVar]; 
                                             setCurrentProduct({ ...currentProduct, variants: newVars, stock: newVars.reduce((s,v)=>s+v.stock,0) }); 
                                             setVariantName(''); setVariantPrice(''); setVariantStock(''); 
@@ -459,15 +502,6 @@ const App: React.FC = () => {
                     </div>
                 </div>
             </div>
-        )}
-        
-        {showTicket && ticketData && (
-            <Ticket 
-                type={ticketType} 
-                data={ticketData} 
-                settings={settings} 
-                onClose={() => setShowTicket(false)} 
-            />
         )}
     </Layout>
   );

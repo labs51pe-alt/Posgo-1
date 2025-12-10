@@ -1,3 +1,4 @@
+
 export enum ViewState {
   POS,
   ADMIN,
@@ -24,6 +25,8 @@ export interface Product {
   hasVariants?: boolean;
   variants?: ProductVariant[];
   image?: string;
+  description?: string;
+  cost?: number; // Added to match Supabase logic if needed visually
 }
 
 export interface CartItem extends Product {
@@ -48,10 +51,11 @@ export interface Transaction {
   tax: number;
   discount: number;
   total: number;
-  paymentMethod: string; // Keep as string for summary ("mixed", "cash")
+  paymentMethod: string;
   payments?: PaymentDetail[];
   profit: number;
   shiftId?: string;
+  storeId?: string; // Supabase linkage
 }
 
 export interface StoreSettings {
@@ -67,7 +71,8 @@ export interface UserProfile {
   id: string;
   name: string;
   role: 'admin' | 'cashier';
-  pin?: string;
+  storeId?: string; // Link to Supabase Store
+  email?: string;
 }
 
 export interface CashShift {
