@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { CartItem, StoreSettings, Customer, PaymentMethod, PaymentDetail } from '../types';
 import { Trash2, CreditCard, Banknote, Minus, Plus, ShoppingBag, X, Zap, Smartphone, Check, Wand2, ChevronDown } from 'lucide-react';
@@ -163,100 +164,114 @@ export const Cart: React.FC<CartProps> = ({ items, onUpdateQuantity, onRemoveIte
 
       {/* SPLIT PAYMENT MODAL */}
       {paymentModalOpen && (
-          <div className="absolute inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-4 animate-fade-in">
-              <div className="bg-white w-full max-w-md rounded-[2.5rem] p-6 shadow-2xl animate-fade-in-up flex flex-col max-h-[90vh]">
-                  <div className="flex justify-between items-center mb-6 border-b border-slate-100 pb-4">
-                      <h3 className="font-bold text-xl text-slate-800">Métodos de Pago</h3>
-                      <button onClick={() => setPaymentModalOpen(false)} className="p-2 bg-slate-100 rounded-full hover:bg-slate-200"><X className="w-5 h-5"/></button>
+          <div className="fixed inset-0 z-[100] bg-slate-900/80 backdrop-blur-md flex items-end sm:items-center justify-center sm:p-4 animate-fade-in">
+              <div className="bg-white w-full max-w-md rounded-t-[2.5rem] sm:rounded-[2.5rem] p-8 shadow-2xl animate-fade-in-up flex flex-col max-h-[90vh]">
+                  
+                  {/* Header */}
+                  <div className="flex justify-between items-center mb-6">
+                      <h3 className="font-black text-xl text-slate-800">Métodos de Pago</h3>
+                      <button onClick={() => setPaymentModalOpen(false)} className="w-10 h-10 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center transition-colors"><X className="w-5 h-5 text-slate-600"/></button>
                   </div>
                   
-                  <div className="mb-6 text-center">
-                      <p className="text-slate-400 font-bold uppercase text-xs tracking-wider mb-2">Total a Pagar</p>
-                      <p className="text-5xl font-black text-slate-800 tracking-tight">{settings.currency}{total.toFixed(2)}</p>
+                  {/* Total Display */}
+                  <div className="mb-8 text-center py-2">
+                      <p className="text-slate-400 font-black uppercase text-xs tracking-[0.2em] mb-1">TOTAL A PAGAR</p>
+                      <p className="text-5xl font-black text-slate-800 tracking-tighter">{settings.currency}{total.toFixed(2)}</p>
                   </div>
 
-                  <div className="flex-1 overflow-y-auto custom-scrollbar space-y-4 pr-1">
+                  {/* Payment Methods */}
+                  <div className="flex-1 overflow-y-auto custom-scrollbar space-y-3 pr-1 pb-4">
+                      
                       {/* EFECTIVO */}
-                      <div className="flex items-center gap-3">
-                          <div className="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0">
+                      <div className="flex items-center gap-4 py-1">
+                          <div className="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0 shadow-sm">
                               <Banknote className="w-6 h-6"/>
                           </div>
-                          <div className="flex-1">
-                              <p className="text-xs font-bold text-emerald-600 uppercase">Efectivo</p>
+                          <div className="flex-1 flex flex-col justify-center h-12">
+                              <p className="text-[10px] font-black text-emerald-600 uppercase tracking-wider leading-none mb-1">Efectivo</p>
                               <input 
                                   type="number" 
-                                  className="w-full bg-transparent font-bold text-lg outline-none text-slate-800 placeholder-slate-300" 
+                                  className="w-full bg-transparent font-black text-xl outline-none text-slate-800 placeholder-slate-200 h-6" 
                                   placeholder="0.00"
                                   value={payAmounts.cash}
                                   onChange={e => handleAmountChange('cash', e.target.value)}
                               />
                           </div>
-                          <button onClick={() => fillRemaining('cash')} className="p-2 text-slate-300 hover:text-emerald-500" title="Completar"><Wand2 className="w-5 h-5"/></button>
+                          <button onClick={() => fillRemaining('cash')} className="w-10 h-10 rounded-full hover:bg-slate-50 flex items-center justify-center text-slate-300 hover:text-emerald-500 transition-colors" title="Autocompletar">
+                              <Wand2 className="w-5 h-5"/>
+                          </button>
                       </div>
 
                       {/* YAPE */}
-                      <div className="flex items-center gap-3">
-                          <div className="w-12 h-12 rounded-2xl bg-purple-100 text-purple-600 flex items-center justify-center shrink-0">
+                      <div className="flex items-center gap-4 py-1">
+                          <div className="w-12 h-12 rounded-2xl bg-purple-100 text-purple-600 flex items-center justify-center shrink-0 shadow-sm">
                               <Smartphone className="w-6 h-6"/>
                           </div>
-                          <div className="flex-1">
-                              <p className="text-xs font-bold text-purple-600 uppercase">Yape</p>
+                          <div className="flex-1 flex flex-col justify-center h-12">
+                              <p className="text-[10px] font-black text-purple-600 uppercase tracking-wider leading-none mb-1">Yape</p>
                               <input 
                                   type="number" 
-                                  className="w-full bg-transparent font-bold text-lg outline-none text-slate-800 placeholder-slate-300" 
+                                  className="w-full bg-transparent font-black text-xl outline-none text-slate-800 placeholder-slate-200 h-6" 
                                   placeholder="0.00"
                                   value={payAmounts.yape}
                                   onChange={e => handleAmountChange('yape', e.target.value)}
                               />
                           </div>
-                          <button onClick={() => fillRemaining('yape')} className="p-2 text-slate-300 hover:text-purple-500" title="Completar"><Wand2 className="w-5 h-5"/></button>
+                          <button onClick={() => fillRemaining('yape')} className="w-10 h-10 rounded-full hover:bg-slate-50 flex items-center justify-center text-slate-300 hover:text-purple-500 transition-colors" title="Autocompletar">
+                              <Wand2 className="w-5 h-5"/>
+                          </button>
                       </div>
 
                       {/* PLIN */}
-                      <div className="flex items-center gap-3">
-                          <div className="w-12 h-12 rounded-2xl bg-cyan-100 text-cyan-600 flex items-center justify-center shrink-0">
+                      <div className="flex items-center gap-4 py-1">
+                          <div className="w-12 h-12 rounded-2xl bg-cyan-100 text-cyan-600 flex items-center justify-center shrink-0 shadow-sm">
                               <Zap className="w-6 h-6"/>
                           </div>
-                          <div className="flex-1">
-                              <p className="text-xs font-bold text-cyan-600 uppercase">Plin</p>
+                          <div className="flex-1 flex flex-col justify-center h-12">
+                              <p className="text-[10px] font-black text-cyan-600 uppercase tracking-wider leading-none mb-1">Plin</p>
                               <input 
                                   type="number" 
-                                  className="w-full bg-transparent font-bold text-lg outline-none text-slate-800 placeholder-slate-300" 
+                                  className="w-full bg-transparent font-black text-xl outline-none text-slate-800 placeholder-slate-200 h-6" 
                                   placeholder="0.00"
                                   value={payAmounts.plin}
                                   onChange={e => handleAmountChange('plin', e.target.value)}
                               />
                           </div>
-                          <button onClick={() => fillRemaining('plin')} className="p-2 text-slate-300 hover:text-cyan-500" title="Completar"><Wand2 className="w-5 h-5"/></button>
+                          <button onClick={() => fillRemaining('plin')} className="w-10 h-10 rounded-full hover:bg-slate-50 flex items-center justify-center text-slate-300 hover:text-cyan-500 transition-colors" title="Autocompletar">
+                              <Wand2 className="w-5 h-5"/>
+                          </button>
                       </div>
 
                       {/* TARJETA */}
-                      <div className="flex items-center gap-3">
-                          <div className="w-12 h-12 rounded-2xl bg-slate-100 text-slate-600 flex items-center justify-center shrink-0">
+                      <div className="flex items-center gap-4 py-1">
+                          <div className="w-12 h-12 rounded-2xl bg-slate-100 text-slate-600 flex items-center justify-center shrink-0 shadow-sm">
                               <CreditCard className="w-6 h-6"/>
                           </div>
-                          <div className="flex-1">
-                              <p className="text-xs font-bold text-slate-500 uppercase">Tarjeta</p>
+                          <div className="flex-1 flex flex-col justify-center h-12">
+                              <p className="text-[10px] font-black text-slate-500 uppercase tracking-wider leading-none mb-1">Tarjeta</p>
                               <input 
                                   type="number" 
-                                  className="w-full bg-transparent font-bold text-lg outline-none text-slate-800 placeholder-slate-300" 
+                                  className="w-full bg-transparent font-black text-xl outline-none text-slate-800 placeholder-slate-200 h-6" 
                                   placeholder="0.00"
                                   value={payAmounts.card}
                                   onChange={e => handleAmountChange('card', e.target.value)}
                               />
                           </div>
-                          <button onClick={() => fillRemaining('card')} className="p-2 text-slate-300 hover:text-slate-500" title="Completar"><Wand2 className="w-5 h-5"/></button>
+                          <button onClick={() => fillRemaining('card')} className="w-10 h-10 rounded-full hover:bg-slate-50 flex items-center justify-center text-slate-300 hover:text-slate-500 transition-colors" title="Autocompletar">
+                              <Wand2 className="w-5 h-5"/>
+                          </button>
                       </div>
                   </div>
 
-                  <div className="mt-6 pt-6 border-t border-slate-100">
+                  {/* Footer */}
+                  <div className="mt-4 pt-6 border-t border-slate-100">
                       {remaining > 0 ? (
-                          <div className="flex justify-between items-center mb-4">
+                          <div className="flex justify-between items-center mb-6">
                               <span className="text-sm font-bold text-slate-400">Restante</span>
-                              <span className="text-xl font-bold text-red-500">{settings.currency}{remaining.toFixed(2)}</span>
+                              <span className="text-xl font-black text-rose-500">{settings.currency}{remaining.toFixed(2)}</span>
                           </div>
                       ) : (
-                           <div className="flex justify-between items-center mb-4">
+                           <div className="flex justify-between items-center mb-6">
                               <span className="text-sm font-bold text-slate-400">Vuelto</span>
                               <span className="text-2xl font-black text-emerald-500">{settings.currency}{change.toFixed(2)}</span>
                           </div>
@@ -264,7 +279,7 @@ export const Cart: React.FC<CartProps> = ({ items, onUpdateQuantity, onRemoveIte
                       
                       <button 
                         onClick={confirmPayment}
-                        className={`w-full py-4 text-white rounded-2xl font-bold text-lg shadow-xl transition-all flex items-center justify-center gap-2 ${remaining > 0.01 ? 'bg-slate-300 cursor-not-allowed' : 'bg-indigo-600 hover:bg-indigo-700 hover:scale-[1.02]'}`}
+                        className={`w-full py-4 text-white rounded-2xl font-bold text-lg shadow-xl transition-all flex items-center justify-center gap-2 ${remaining > 0.01 ? 'bg-slate-300 cursor-not-allowed shadow-none text-slate-400' : 'bg-indigo-600 hover:bg-indigo-700 hover:scale-[1.02] shadow-indigo-200'}`}
                         disabled={remaining > 0.01}
                       >
                           <Check className="w-6 h-6"/> Confirmar Pago
