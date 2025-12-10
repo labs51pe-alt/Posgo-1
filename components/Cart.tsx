@@ -77,13 +77,13 @@ export const Cart: React.FC<CartProps> = ({ items, onUpdateQuantity, onRemoveIte
       
       {/* Mobile Handle / Close Button */}
       {onClose && (
-        <div className="flex lg:hidden justify-center pt-3 pb-1" onClick={onClose}>
-             <div className="w-12 h-1.5 bg-slate-200 rounded-full mb-2"></div>
+        <div className="flex lg:hidden justify-center pt-2 pb-0" onClick={onClose}>
+             <div className="w-12 h-1.5 bg-slate-200 rounded-full mb-1"></div>
         </div>
       )}
 
       {/* Header */}
-      <div className="p-6 border-b border-teal-50 flex justify-between items-center bg-teal-50/30">
+      <div className="p-4 lg:p-6 border-b border-teal-50 flex justify-between items-center bg-teal-50/30">
         <h2 className="font-black text-xl text-slate-800 flex items-center gap-2">
             <ShoppingBag className="w-5 h-5 text-indigo-600"/> Canasta
         </h2>
@@ -109,7 +109,7 @@ export const Cart: React.FC<CartProps> = ({ items, onUpdateQuantity, onRemoveIte
         ) : items.map((item, idx) => (
             <div 
                 key={`${item.id}-${item.selectedVariantId || 'base'}-${idx}`} 
-                className="bg-white border-l-4 border-transparent hover:border-l-indigo-500 border-y border-r border-slate-100 rounded-xl p-4 shadow-sm hover:shadow-md transition-all group animate-fade-in-up"
+                className="bg-white border-l-4 border-transparent hover:border-l-indigo-500 border-y border-r border-slate-100 rounded-xl p-3 lg:p-4 shadow-sm hover:shadow-md transition-all group animate-fade-in-up"
             >
                 <div className="flex justify-between items-start mb-2">
                     <div>
@@ -133,8 +133,8 @@ export const Cart: React.FC<CartProps> = ({ items, onUpdateQuantity, onRemoveIte
       </div>
 
       {/* Footer Totals */}
-      <div className={`p-6 bg-slate-50 border-t border-slate-200 ${onClose ? 'pb-10' : ''}`}>
-        <div className="space-y-3 mb-6">
+      <div className={`p-4 lg:p-6 bg-slate-50 border-t border-slate-200 ${onClose ? 'pb-8 lg:pb-6' : ''}`}>
+        <div className="space-y-2 mb-4 lg:mb-6">
             <div className="flex justify-between text-slate-500 text-sm font-medium">
                 <span>Subtotal</span>
                 <span>{settings.currency}{subtotal.toFixed(2)}</span>
@@ -154,7 +154,7 @@ export const Cart: React.FC<CartProps> = ({ items, onUpdateQuantity, onRemoveIte
         <button 
             onClick={() => setPaymentModalOpen(true)}
             disabled={items.length === 0}
-            className="w-full py-5 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-2xl font-bold shadow-xl shadow-indigo-200 transition-all active:scale-95 flex items-center justify-center gap-3 text-lg"
+            className="w-full py-3.5 lg:py-5 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-2xl font-bold shadow-xl shadow-indigo-200 transition-all active:scale-95 flex items-center justify-center gap-3 text-base lg:text-lg"
         >
             <Banknote className="w-6 h-6"/>
             COBRAR

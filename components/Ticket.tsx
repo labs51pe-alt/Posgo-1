@@ -78,7 +78,7 @@ export const Ticket: React.FC<TicketProps> = ({ type, data, settings, onClose })
                     <div ref={printRef} className="bg-white p-6 shadow-sm border border-slate-200 w-full text-xs font-mono leading-relaxed text-slate-800 relative">
                         <div className="absolute top-0 left-0 w-full h-2 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMiIgaGVpZ2h0PSIxMiIgdmlld0JveD0iMCAwIDEyIDEyIj48cGF0aCBkPSJNMCA2IEw2IDAgTDEyIDZNMCA2IEw2IDEyIEwxMiA2IiBmaWxsPSIjZjFmNXY5Ii8+PC9zdmc+')] bg-repeat-x -mt-2"></div>
                         <div className="flex flex-col items-center text-center mb-6">
-                            <div className="w-10 h-10 bg-emerald-500 rounded-xl flex items-center justify-center text-white mb-2 print:border print:border-black print:text-black">
+                            <div className="w-10 h-10 bg-slate-900 rounded-xl flex items-center justify-center text-white mb-2 print:border print:border-black print:text-black">
                                 <Rocket className="w-6 h-6 fill-current" />
                             </div>
                             <h2 className="text-xl font-black uppercase tracking-tight mb-1">PosGo!</h2>

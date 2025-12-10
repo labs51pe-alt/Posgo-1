@@ -351,7 +351,7 @@ export const POSView = ({ products, cart, transactions = [], onAddToCart, onUpda
             {isMobileCartOpen && (
                 <div className="fixed inset-0 z-[60] lg:hidden flex flex-col">
                     <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onClick={() => setIsMobileCartOpen(false)}></div>
-                    <div className="relative mt-auto h-[90vh] bg-white rounded-t-[2.5rem] shadow-[0_-10px_40px_rgba(0,0,0,0.2)] flex flex-col animate-fade-in-up overflow-hidden">
+                    <div className="relative mt-auto h-[80vh] bg-white rounded-t-[2.5rem] shadow-[0_-10px_40px_rgba(0,0,0,0.2)] flex flex-col animate-fade-in-up overflow-hidden">
                         <Cart 
                             items={cart} 
                             onUpdateQuantity={onUpdateCart} 

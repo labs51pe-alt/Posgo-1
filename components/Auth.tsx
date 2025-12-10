@@ -189,7 +189,7 @@ export const Auth: React.FC<AuthProps> = ({ onLogin }) => {
 
              {/* Brand Header */}
              <div className="relative z-10 flex items-center gap-4 mb-10">
-                 <div className="w-14 h-14 bg-gradient-to-br from-emerald-400 to-cyan-500 rounded-2xl flex items-center justify-center shadow-lg shadow-emerald-200 transform -rotate-6 transition-transform hover:rotate-0">
+                 <div className="w-14 h-14 bg-slate-900 rounded-2xl flex items-center justify-center shadow-lg shadow-slate-300 transform -rotate-6 transition-transform hover:rotate-0">
                      <Rocket className="w-8 h-8 text-white" />
                  </div>
                  <span className="text-4xl font-black text-slate-900 tracking-tighter font-sans">PosGo!</span>
@@ -260,7 +260,7 @@ export const Auth: React.FC<AuthProps> = ({ onLogin }) => {
                 
                 {/* Mobile Logo */}
                 <div className="lg:hidden flex justify-center mb-6">
-                    <button onClick={handleLogoClick} className="w-16 h-16 bg-gradient-to-br from-emerald-400 to-cyan-500 rounded-2xl flex items-center justify-center shadow-lg shadow-emerald-200">
+                    <button onClick={handleLogoClick} className="w-16 h-16 bg-slate-900 rounded-2xl flex items-center justify-center shadow-lg shadow-slate-300">
                         <Rocket className="w-8 h-8 text-white"/>
                     </button>
                 </div>
