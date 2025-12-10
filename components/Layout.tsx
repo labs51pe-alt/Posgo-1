@@ -55,10 +55,10 @@ export const Layout: React.FC<LayoutProps> = ({ currentView, onChangeView, setti
       {/* SIDEBAR NAVIGATION (Desktop) */}
       <div className="hidden lg:flex w-24 bg-white/70 backdrop-blur-2xl border-r border-slate-200/60 flex-col items-center py-6 z-20 shadow-xl shadow-indigo-100/20 overflow-y-auto custom-scrollbar">
         <div className="flex flex-col items-center mb-8 group cursor-default">
-            <div className="w-12 h-12 bg-gradient-to-tr from-indigo-600 to-violet-600 rounded-2xl flex items-center justify-center shadow-lg shadow-indigo-300 transform transition-transform group-hover:rotate-6 group-hover:scale-110">
-              <Rocket className="w-6 h-6 text-white" />
+            <div className="w-14 h-14 bg-gradient-to-br from-emerald-400 to-cyan-500 rounded-2xl flex items-center justify-center shadow-lg shadow-emerald-200 transform transition-transform group-hover:rotate-6 group-hover:scale-110">
+              <Rocket className="w-8 h-8 text-white" />
             </div>
-            <span className="text-[10px] font-black text-slate-800 mt-2 tracking-tight">PosGo!</span>
+            <span className="text-xs font-black text-slate-800 mt-2 tracking-tight">PosGo!</span>
         </div>
 
         <div className="flex-1 w-full px-3 flex flex-col">

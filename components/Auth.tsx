@@ -188,11 +188,11 @@ export const Auth: React.FC<AuthProps> = ({ onLogin }) => {
              <div className="absolute -bottom-8 left-20 w-72 h-72 bg-pink-200 rounded-full mix-blend-multiply filter blur-3xl opacity-60 animate-blob animation-delay-4000"></div>
 
              {/* Brand Header */}
-             <div className="relative z-10 flex items-center gap-3 mb-8">
-                 <div className="w-8 h-8 bg-slate-900 rounded-xl flex items-center justify-center shadow-lg transform -rotate-6">
-                     <Rocket className="w-4 h-4 text-emerald-400" />
+             <div className="relative z-10 flex items-center gap-4 mb-10">
+                 <div className="w-14 h-14 bg-gradient-to-br from-emerald-400 to-cyan-500 rounded-2xl flex items-center justify-center shadow-lg shadow-emerald-200 transform -rotate-6 transition-transform hover:rotate-0">
+                     <Rocket className="w-8 h-8 text-white" />
                  </div>
-                 <span className="text-lg font-black text-slate-900 tracking-tight font-sans">GaorSystem</span>
+                 <span className="text-4xl font-black text-slate-900 tracking-tighter font-sans">PosGo!</span>
              </div>
 
              {/* Main Content */}
@@ -260,14 +260,14 @@ export const Auth: React.FC<AuthProps> = ({ onLogin }) => {
                 
                 {/* Mobile Logo */}
                 <div className="lg:hidden flex justify-center mb-6">
-                    <button onClick={handleLogoClick} className="w-14 h-14 bg-slate-900 rounded-2xl flex items-center justify-center">
-                        <Rocket className="w-7 h-7 text-emerald-400"/>
+                    <button onClick={handleLogoClick} className="w-16 h-16 bg-gradient-to-br from-emerald-400 to-cyan-500 rounded-2xl flex items-center justify-center shadow-lg shadow-emerald-200">
+                        <Rocket className="w-8 h-8 text-white"/>
                     </button>
                 </div>
 
                 <div className="mb-8 text-center lg:text-left">
                     <h2 className="text-2xl font-black text-slate-900 mb-1 font-sans">
-                        {activeTab === 'CLIENT' ? 'Bienvenido de nuevo' : 'Prueba Gaor POS'}
+                        {activeTab === 'CLIENT' ? 'Bienvenido de nuevo' : 'Prueba PosGo!'}
                     </h2>
                     <p className="text-slate-500 font-sans text-sm">
                         {activeTab === 'CLIENT' ? 'Ingresa tus credenciales para continuar.' : 'Acceso instantáneo para evaluación.'}
@@ -398,7 +398,7 @@ export const Auth: React.FC<AuthProps> = ({ onLogin }) => {
                     <div className="flex items-center justify-center gap-2 text-[10px] font-black text-slate-300 uppercase tracking-widest font-sans">
                         <span>Powered by</span>
                         <a href="https://gaorsystem.vercel.app/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-slate-400 hover:text-emerald-500 transition-colors">
-                            <Rocket className="w-3 h-3"/> GaorSystemPeru
+                            <Rocket className="w-3 h-3"/> PosGo!
                         </a>
                     </div>
                 </div>
