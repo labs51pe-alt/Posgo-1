@@ -355,7 +355,7 @@ export const POSView = ({ products, cart, transactions = [], onAddToCart, onUpda
                         <Cart 
                             items={cart} 
                             onUpdateQuantity={onUpdateCart} 
-                            onRemoveFromCart={onRemoveFromCart} 
+                            onRemoveItem={onRemoveFromCart} 
                             onUpdateDiscount={onUpdateDiscount} 
                             onCheckout={(method, payments) => { onCheckout(method, payments); setIsMobileCartOpen(false); }} 
                             onClearCart={onClearCart} 
@@ -406,7 +406,7 @@ export const POSView = ({ products, cart, transactions = [], onAddToCart, onUpda
         
         {/* DESKTOP CART SIDEBAR */}
         <div id="pos-cart" className="w-[400px] bg-white border-l border-slate-100 shadow-2xl shadow-indigo-100 z-20 hidden lg:block">
-            <Cart items={cart} onUpdateQuantity={onUpdateCart} onRemoveFromCart={onRemoveFromCart} onUpdateDiscount={onUpdateDiscount} onCheckout={onCheckout} onClearCart={onClearCart} settings={settings} customers={customers} />
+            <Cart items={cart} onUpdateQuantity={onUpdateCart} onRemoveItem={onRemoveFromCart} onUpdateDiscount={onUpdateDiscount} onCheckout={onCheckout} onClearCart={onClearCart} settings={settings} customers={customers} />
         </div>
     </div>
   );
