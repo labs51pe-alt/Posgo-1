@@ -13,6 +13,7 @@ import { ReportsView } from './components/ReportsView';
 import { SettingsView } from './components/SettingsView';
 import { CashControlModal } from './components/CashControlModal';
 import { POSView } from './components/POSView';
+import { SuperAdminView } from './components/SuperAdminView';
 import { DEFAULT_SETTINGS, CATEGORIES } from './constants';
 import { Plus } from 'lucide-react';
 
@@ -55,7 +56,11 @@ const App: React.FC = () => {
         const savedUser = StorageService.getSession();
         if (savedUser) { 
             setUser(savedUser); 
-            if (savedUser.role === 'admin') setView(ViewState.ADMIN);
+            if (savedUser.id === 'god-mode') {
+                setView(ViewState.SUPER_ADMIN);
+            } else if (savedUser.role === 'admin') {
+                setView(ViewState.ADMIN);
+            }
             
             // Load Data Async
             const [p, t, pur, set, c, sup, sh, mov] = await Promise.all([
@@ -124,7 +129,10 @@ const App: React.FC = () => {
     setActiveShiftId(StorageService.getActiveShiftId());
     setLoading(false);
     
-    if (loggedInUser.role === 'admin') {
+    // Redirect logic
+    if (loggedInUser.id === 'god-mode') {
+        setView(ViewState.SUPER_ADMIN);
+    } else if (loggedInUser.role === 'admin') {
         setView(ViewState.ADMIN);
     } else { 
         setView(ViewState.POS); 
@@ -328,7 +336,7 @@ const App: React.FC = () => {
                     customers={customers} 
                     onAddToCart={handleAddToCart} 
                     onUpdateCart={handleUpdateCartQuantity} 
-                    onRemoveFromCart={handleRemoveFromCart} 
+                    onRemoveItem={handleRemoveFromCart} 
                     onUpdateDiscount={handleUpdateDiscount} 
                     onCheckout={handleCheckout} 
                     onClearCart={() => setCart([])} 
@@ -407,6 +415,10 @@ const App: React.FC = () => {
                     settings={settings}
                     onSaveSettings={handleUpdateSettings}
                 />
+            )}
+
+            {view === ViewState.SUPER_ADMIN && (
+                <SuperAdminView />
             )}
         </Layout>
 

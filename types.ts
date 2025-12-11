@@ -4,7 +4,8 @@ export enum ViewState {
   INVENTORY,
   PURCHASES,
   REPORTS,
-  SETTINGS
+  SETTINGS,
+  SUPER_ADMIN
 }
 
 export interface ProductVariant {
@@ -69,7 +70,7 @@ export interface StoreSettings {
 export interface UserProfile {
   id: string;
   name: string;
-  role: 'admin' | 'cashier';
+  role: 'admin' | 'cashier' | 'super_admin' | 'owner';
   storeId?: string; // Link to Supabase Store
   email?: string;
 }
@@ -119,4 +120,20 @@ export interface Purchase {
   supplierId: string;
   total: number;
   items: PurchaseItem[];
+}
+
+export interface Lead {
+    id: string;
+    name: string;
+    business_name: string;
+    phone: string;
+    created_at: string;
+    status?: 'NEW' | 'CONTACTED';
+}
+
+export interface Store {
+    id: string;
+    created_at: string;
+    settings: StoreSettings;
+    owner_id?: string;
 }
