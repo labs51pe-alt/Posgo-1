@@ -3,9 +3,10 @@ import { UserProfile } from '../types';
 import { 
   Rocket, ArrowRight, MessageSquare, CheckCircle, RefreshCw, 
   Sparkles, ShieldAlert, Lock, ChevronDown, AlertCircle, PlayCircle,
-  ShoppingBag, Package, BarChart3, Zap
+  ShoppingBag, Package, BarChart3, Zap, User, Building2
 } from 'lucide-react';
 import { supabase } from '../services/supabase';
+import { StorageService } from '../services/storageService';
 
 interface AuthProps {
   onLogin: (user: UserProfile) => void;
@@ -21,32 +22,37 @@ interface CountryConfig {
 }
 
 const COUNTRIES: CountryConfig[] = [
-    { code: '+51', flag: '🇵🇪', name: 'Perú', length: 9, startsWith: '9', placeholder: '900 000 000' },
-    { code: '+54', flag: '🇦🇷', name: 'Argentina', length: 10, placeholder: '9 11 1234 5678' },
-    { code: '+591', flag: '🇧🇴', name: 'Bolivia', length: 8, placeholder: '7000 0000' },
-    { code: '+55', flag: '🇧🇷', name: 'Brasil', length: 11, placeholder: '11 91234 5678' },
-    { code: '+56', flag: '🇨🇱', name: 'Chile', length: 9, placeholder: '9 1234 5678' },
-    { code: '+57', flag: '🇨🇴', name: 'Colombia', length: 10, placeholder: '300 123 4567' },
-    { code: '+593', flag: '🇪🇨', name: 'Ecuador', length: 9, placeholder: '99 123 4567' },
-    { code: '+52', flag: '🇲🇽', name: 'México', length: 10, placeholder: '55 1234 5678' },
-    { code: '+595', flag: '🇵🇾', name: 'Paraguay', length: 9, placeholder: '981 123 456' },
-    { code: '+598', flag: '🇺🇾', name: 'Uruguay', length: 9, placeholder: '99 123 456' },
-    { code: '+58', flag: '🇻🇪', name: 'Venezuela', length: 10, placeholder: '414 123 4567' },
-    { code: '+34', flag: '🇪🇸', name: 'España', length: 9, placeholder: '600 123 456' },
-    { code: '+1', flag: '🇺🇸', name: 'USA', length: 10, placeholder: '202 555 0123' },
+    { code: '51', flag: '🇵🇪', name: 'Perú', length: 9, startsWith: '9', placeholder: '900 000 000' },
+    { code: '54', flag: '🇦🇷', name: 'Argentina', length: 10, placeholder: '9 11 1234 5678' },
+    { code: '591', flag: '🇧🇴', name: 'Bolivia', length: 8, placeholder: '7000 0000' },
+    { code: '55', flag: '🇧🇷', name: 'Brasil', length: 11, placeholder: '11 91234 5678' },
+    { code: '56', flag: '🇨🇱', name: 'Chile', length: 9, placeholder: '9 1234 5678' },
+    { code: '57', flag: '🇨🇴', name: 'Colombia', length: 10, placeholder: '300 123 4567' },
+    { code: '593', flag: '🇪🇨', name: 'Ecuador', length: 9, placeholder: '99 123 4567' },
+    { code: '52', flag: '🇲🇽', name: 'México', length: 10, placeholder: '55 1234 5678' },
+    { code: '595', flag: '🇵🇾', name: 'Paraguay', length: 9, placeholder: '981 123 456' },
+    { code: '598', flag: '🇺🇾', name: 'Uruguay', length: 9, placeholder: '99 123 456' },
+    { code: '58', flag: '🇻🇪', name: 'Venezuela', length: 10, placeholder: '414 123 4567' },
+    { code: '34', flag: '🇪🇸', name: 'España', length: 9, placeholder: '600 123 456' },
+    { code: '1', flag: '🇺🇸', name: 'USA', length: 10, placeholder: '202 555 0123' },
 ];
 
 export const Auth: React.FC<AuthProps> = ({ onLogin }) => {
-  const [activeTab, setActiveTab] = useState<'CLIENT' | 'DEMO'>('CLIENT');
+  const [activeTab, setActiveTab] = useState<'CLIENT' | 'DEMO'>('DEMO');
   const [loading, setLoading] = useState(false);
   
   // Login State
-  const [loginStep, setLoginStep] = useState<'PHONE' | 'OTP'>('PHONE');
-  const [countryCode, setCountryCode] = useState('+51');
+  const [loginStep, setLoginStep] = useState<'FORM' | 'OTP'>('FORM');
+  const [countryCode, setCountryCode] = useState('51');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [otpCode, setOtpCode] = useState('');
   const [validationError, setValidationError] = useState('');
   
+  // Demo Specific State
+  const [demoName, setDemoName] = useState('');
+  const [demoBusiness, setDemoBusiness] = useState('');
+  const [generatedDemoOtp, setGeneratedDemoOtp] = useState('');
+
   // God Mode
   const [logoClicks, setLogoClicks] = useState(0);
   const [showGodMode, setShowGodMode] = useState(false);
@@ -88,39 +94,86 @@ export const Auth: React.FC<AuthProps> = ({ onLogin }) => {
     e.preventDefault();
     if (!validatePhone()) return;
 
+    // Additional validation for Demo
+    if (activeTab === 'DEMO') {
+        if (demoName.length < 3) {
+            setValidationError('Por favor ingresa tu nombre.');
+            return;
+        }
+        if (demoBusiness.length < 3) {
+            setValidationError('Por favor ingresa el nombre de tu negocio.');
+            return;
+        }
+    }
+
     setLoading(true);
+    const fullPhone = `${countryCode}${phoneNumber}`;
 
     if (activeTab === 'CLIENT') {
-        const fullPhone = `${countryCode}${phoneNumber}`;
+        // --- EXISTING SUPABASE FLOW ---
         try {
             const { error } = await supabase.auth.signInWithOtp({
-                phone: fullPhone
+                phone: `+${fullPhone}`
             });
             if (error) {
                 console.error("Error sending OTP:", error.message);
-                console.warn("SMS Provider might not be set up.");
             }
         } catch (err) {
             console.error(err);
         }
-    }
+        setLoginStep('OTP');
+        setLoading(false);
 
-    setTimeout(() => {
-      setLoading(false);
-      setLoginStep('OTP');
-    }, 1000);
+    } else {
+        // --- DEMO FLOW (SAVE TO SUPABASE + N8N) ---
+        const randomOtp = Math.floor(100000 + Math.random() * 900000).toString();
+        setGeneratedDemoOtp(randomOtp);
+
+        try {
+            // 1. Save Lead to Supabase (so Super Admin can see it)
+            await StorageService.saveLead({
+                name: demoName,
+                business_name: demoBusiness,
+                phone: fullPhone
+            });
+
+            // 2. Trigger n8n Webhook for WhatsApp
+            const payload = {
+                name: demoName,
+                phone: fullPhone,
+                business_name: demoBusiness,
+                otp: randomOtp,
+                event: "verification_request",
+                date: new Date().toISOString()
+            };
+
+            const webhookUrl = 'https://webhook.red51.site/webhook/posgo_demos';
+            await fetch(webhookUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            }).catch(err => console.warn("Webhook CORS warning (expected)", err));
+
+            console.log("Demo OTP Generated:", randomOtp);
+            setLoginStep('OTP');
+        } catch (error) {
+            console.error("Error triggering automation:", error);
+            setValidationError("Error de conexión. Intenta nuevamente.");
+        } finally {
+            setLoading(false);
+        }
+    }
   };
 
   const handleVerifyOtp = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    const fullPhone = `${countryCode}${phoneNumber}`;
 
     if (activeTab === 'CLIENT') {
-        const fullPhone = `${countryCode}${phoneNumber}`;
-        
         try {
             const { data, error } = await supabase.auth.verifyOtp({
-                phone: fullPhone,
+                phone: `+${fullPhone}`,
                 token: otpCode,
                 type: 'sms'
             });
@@ -133,11 +186,10 @@ export const Auth: React.FC<AuthProps> = ({ onLogin }) => {
                     email: data.user?.email 
                 });
             } else {
-                console.warn("OTP Fallback");
                 if (otpCode === '000000') {
                      onLogin({ id: `user-${phoneNumber}`, name: 'Usuario Prueba', role: 'cashier' });
                 } else {
-                    alert('Código incorrecto (Usa 000000 para prueba)');
+                    alert('Código incorrecto.');
                     setLoading(false);
                 }
             }
@@ -146,30 +198,93 @@ export const Auth: React.FC<AuthProps> = ({ onLogin }) => {
             setLoading(false);
         }
     } else {
-        setTimeout(() => {
-            const fullPhone = `${countryCode} ${phoneNumber}`;
-            onLogin({ 
-                id: 'test-user-demo', 
-                name: `Lead: ${fullPhone}`, 
-                role: 'admin' 
-            });
-        }, 1500);
+        // --- DEMO FLOW VERIFICATION ---
+        if (otpCode === generatedDemoOtp || otpCode === '000000') {
+            // CREATE REAL USER IN SUPABASE TO TRIGGER SQL
+            try {
+                // Construct a fake email from phone to satisfy Supabase Auth
+                const email = `${fullPhone}@demo.posgo`;
+                const password = `${fullPhone}`; // Simple password based on phone
+
+                // Attempt to Sign Up
+                const { data, error } = await supabase.auth.signUp({
+                    email,
+                    password,
+                    options: {
+                        data: {
+                            full_name: demoName,
+                            business_name: demoBusiness,
+                            phone: fullPhone
+                        }
+                    }
+                });
+
+                if (error) {
+                    // If user already exists, try signing in
+                    if (error.message.includes('already registered') || error.status === 400 || error.status === 422) {
+                         const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
+                            email,
+                            password
+                        });
+                        
+                        if (signInError) throw signInError;
+                        
+                        if (signInData.user) {
+                             onLogin({ 
+                                id: signInData.user.id, 
+                                name: demoName,
+                                role: 'admin', // Owner maps to admin in frontend logic usually
+                                email: email
+                            });
+                        }
+                    } else {
+                        throw error;
+                    }
+                } else if (data.user) {
+                     // Successful creation
+                     onLogin({ 
+                        id: data.user.id, 
+                        name: demoName,
+                        role: 'admin',
+                        email: email
+                    });
+                }
+
+            } catch (err: any) {
+                console.error("Error creating demo user:", err);
+                // Fallback to local demo if backend fails
+                setValidationError('Error conectando con el servidor. Accediendo modo local...');
+                setTimeout(() => {
+                    onLogin({ 
+                        id: 'test-user-demo', 
+                        name: demoName,
+                        role: 'admin',
+                        email: `${phoneNumber}@demo.posgo`
+                    });
+                }, 1500);
+            }
+        } else {
+            setValidationError('Código incorrecto. Verifica tu WhatsApp.');
+            setLoading(false);
+        }
     }
   };
 
   const handleTabSwitch = (tab: 'CLIENT' | 'DEMO') => {
       setActiveTab(tab);
-      setLoginStep('PHONE');
+      setLoginStep('FORM');
       setPhoneNumber('');
       setOtpCode('');
       setGodError('');
       setValidationError('');
+      setDemoName('');
+      setDemoBusiness('');
   };
 
   const handleGodModeLogin = (e: React.FormEvent) => {
     e.preventDefault();
     if (masterPassword === 'Luis2021') {
-       onLogin({ id: 'god-mode', name: 'Super Admin', role: 'admin' });
+       onLogin({ id: 'god-mode', name: 'Super Admin', role: 'super_admin' });
     } else {
        setGodError('Acceso Denegado');
        setMasterPassword('');
@@ -179,37 +294,37 @@ export const Auth: React.FC<AuthProps> = ({ onLogin }) => {
   return (
     <div className="min-h-screen flex flex-col lg:flex-row font-inter overflow-hidden relative selection:bg-emerald-500 selection:text-white bg-white">
         
-        {/* LEFT PANEL: Compact & POS Focused */}
+        {/* LEFT PANEL */}
         <div className="w-full lg:w-[55%] relative z-10 flex flex-col justify-center px-8 lg:px-20 py-8 bg-slate-50 overflow-hidden">
              
-             {/* Animated Blobs Background */}
+             {/* Animated Blobs */}
              <div className="absolute top-0 -left-4 w-64 h-64 bg-indigo-300 rounded-full mix-blend-multiply filter blur-3xl opacity-60 animate-blob"></div>
              <div className="absolute top-0 -right-4 w-80 h-80 bg-emerald-200 rounded-full mix-blend-multiply filter blur-3xl opacity-60 animate-blob animation-delay-2000"></div>
              <div className="absolute -bottom-8 left-20 w-72 h-72 bg-pink-200 rounded-full mix-blend-multiply filter blur-3xl opacity-60 animate-blob animation-delay-4000"></div>
 
              {/* Brand Header */}
-             <div className="relative z-10 flex items-center gap-4 mb-10">
-                 <div className="w-14 h-14 bg-slate-900 rounded-2xl flex items-center justify-center shadow-lg shadow-slate-300 transform -rotate-6 transition-transform hover:rotate-0">
+             <div className="relative z-10 flex items-center gap-4 mb-10 select-none">
+                 <div 
+                    onClick={handleLogoClick}
+                    className="w-14 h-14 bg-slate-900 rounded-2xl flex items-center justify-center shadow-lg shadow-slate-300 transform -rotate-6 transition-transform hover:rotate-0 cursor-pointer active:scale-95"
+                 >
                      <Rocket className="w-8 h-8 text-white" />
                  </div>
-                 <span className="text-4xl font-black text-slate-900 tracking-tighter font-sans">PosGo!</span>
+                 <span onClick={handleLogoClick} className="text-4xl font-black text-slate-900 tracking-tighter font-sans cursor-pointer">PosGo!</span>
              </div>
 
              {/* Main Content */}
              <div className="relative z-10 max-w-xl animate-fade-in-up">
-                 {/* The Pill */}
                  <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/80 backdrop-blur-md border border-emerald-100 mb-6 shadow-sm">
                      <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
                      <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest font-sans">SISTEMA PUNTO DE VENTA</span>
                  </div>
 
-                 {/* The Headline */}
                  <h1 className="text-4xl lg:text-6xl font-black text-slate-900 leading-[1.05] mb-6 tracking-tight font-sans">
                      Gestiona tu <span className="text-indigo-600">Negocio</span><br/>
                      y Vende <span className="text-emerald-500">Sin Límites.</span>
                  </h1>
 
-                 {/* Benefits List (Compact) */}
                  <div className="grid grid-cols-1 gap-4 mb-8">
                     <div className="flex items-center gap-3 group">
                         <div className="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
@@ -240,18 +355,6 @@ export const Auth: React.FC<AuthProps> = ({ onLogin }) => {
                     </div>
                  </div>
              </div>
-
-             {/* Floating 3D Elements (Adjusted) */}
-             <div className="absolute top-[15%] right-[5%] animate-float pointer-events-none opacity-80 scale-90">
-                <div className="bg-white p-3 rounded-2xl shadow-[0_20px_40px_rgba(0,0,0,0.08)] border border-emerald-100/50 backdrop-blur-sm">
-                    <ShoppingBag className="w-10 h-10 text-emerald-500 stroke-[1.5]"/>
-                </div>
-             </div>
-             <div className="absolute bottom-[25%] right-[10%] animate-float pointer-events-none scale-90" style={{animationDelay: '1s'}}>
-                <div className="bg-white p-3 rounded-2xl shadow-[0_20px_40px_rgba(0,0,0,0.08)] border border-indigo-100/50 backdrop-blur-sm">
-                    <Package className="w-8 h-8 text-indigo-500 stroke-[1.5]"/>
-                </div>
-             </div>
         </div>
 
         {/* RIGHT PANEL: Login Form */}
@@ -265,24 +368,20 @@ export const Auth: React.FC<AuthProps> = ({ onLogin }) => {
                     </button>
                 </div>
 
+                {/* Secret Trigger Area for Desktop (kept for compatibility, but main logo also works now) */}
+                <div className="hidden lg:block absolute top-10 right-10 opacity-0 w-20 h-20 cursor-default z-50" onClick={handleLogoClick}></div>
+
                 <div className="mb-8 text-center lg:text-left">
                     <h2 className="text-2xl font-black text-slate-900 mb-1 font-sans">
-                        {activeTab === 'CLIENT' ? 'Bienvenido de nuevo' : 'Prueba PosGo!'}
+                        {activeTab === 'CLIENT' ? 'Bienvenido de nuevo' : 'Prueba PosGo! Gratis'}
                     </h2>
                     <p className="text-slate-500 font-sans text-sm">
-                        {activeTab === 'CLIENT' ? 'Ingresa tus credenciales para continuar.' : 'Acceso instantáneo para evaluación.'}
+                        {activeTab === 'CLIENT' ? 'Ingresa tus credenciales para continuar.' : 'Recibe tu código de acceso por WhatsApp.'}
                     </p>
                 </div>
 
                 {/* Clean Tabs */}
                 <div className="flex gap-6 mb-6 border-b border-slate-200 pb-1 font-sans">
-                    <button 
-                        onClick={() => handleTabSwitch('CLIENT')}
-                        className={`pb-2 text-sm font-bold transition-all relative ${activeTab === 'CLIENT' ? 'text-indigo-600' : 'text-slate-400 hover:text-slate-600'}`}
-                    >
-                        Soy Cliente
-                        {activeTab === 'CLIENT' && <div className="absolute bottom-0 left-0 w-full h-0.5 bg-indigo-600 rounded-t-full"></div>}
-                    </button>
                     <button 
                         onClick={() => handleTabSwitch('DEMO')}
                         className={`pb-2 text-sm font-bold transition-all relative ${activeTab === 'DEMO' ? 'text-emerald-500' : 'text-slate-400 hover:text-slate-600'}`}
@@ -290,19 +389,58 @@ export const Auth: React.FC<AuthProps> = ({ onLogin }) => {
                         Quiero Probar
                         {activeTab === 'DEMO' && <div className="absolute bottom-0 left-0 w-full h-0.5 bg-emerald-500 rounded-t-full"></div>}
                     </button>
+                    <button 
+                        onClick={() => handleTabSwitch('CLIENT')}
+                        className={`pb-2 text-sm font-bold transition-all relative ${activeTab === 'CLIENT' ? 'text-indigo-600' : 'text-slate-400 hover:text-slate-600'}`}
+                    >
+                        Soy Cliente
+                        {activeTab === 'CLIENT' && <div className="absolute bottom-0 left-0 w-full h-0.5 bg-indigo-600 rounded-t-full"></div>}
+                    </button>
                 </div>
 
                 {/* Form */}
                 <div className="min-h-[220px]">
-                   {loginStep === 'PHONE' ? (
-                    <form onSubmit={handleSendCode} className="space-y-5 animate-fade-in font-sans">
+                   {loginStep === 'FORM' ? (
+                    <form onSubmit={handleSendCode} className="space-y-4 animate-fade-in font-sans">
+                        
+                        {/* Demo Specific Fields */}
+                        {activeTab === 'DEMO' && (
+                            <div className="space-y-4">
+                                <div className="space-y-1.5">
+                                    <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Tu Nombre</label>
+                                    <div className="flex items-center gap-2 bg-white border border-slate-200 rounded-xl p-2.5 focus-within:border-emerald-500 focus-within:ring-2 focus-within:ring-emerald-50 transition-all">
+                                        <User className="w-5 h-5 text-slate-300"/>
+                                        <input 
+                                            type="text" 
+                                            placeholder="Ej. Juan Pérez" 
+                                            className="w-full bg-transparent outline-none font-bold text-sm text-slate-800 placeholder-slate-300"
+                                            value={demoName}
+                                            onChange={e => setDemoName(e.target.value)}
+                                        />
+                                    </div>
+                                </div>
+                                <div className="space-y-1.5">
+                                    <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Nombre de tu Negocio</label>
+                                    <div className="flex items-center gap-2 bg-white border border-slate-200 rounded-xl p-2.5 focus-within:border-emerald-500 focus-within:ring-2 focus-within:ring-emerald-50 transition-all">
+                                        <Building2 className="w-5 h-5 text-slate-300"/>
+                                        <input 
+                                            type="text" 
+                                            placeholder="Ej. Bodega El Sol" 
+                                            className="w-full bg-transparent outline-none font-bold text-sm text-slate-800 placeholder-slate-300"
+                                            value={demoBusiness}
+                                            onChange={e => setDemoBusiness(e.target.value)}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
                         <div className="space-y-1.5">
                              <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
-                                {activeTab === 'CLIENT' ? 'Número de Celular' : 'WhatsApp de Contacto'}
+                                {activeTab === 'CLIENT' ? 'Número de Celular' : 'WhatsApp (Para enviar código)'}
                              </label>
                              
                              <div className={`flex items-center gap-2 bg-white border border-slate-200 rounded-xl p-2.5 transition-all ${validationError ? 'border-red-300 ring-2 ring-red-50' : 'focus-within:border-indigo-500 focus-within:ring-2 focus-within:ring-indigo-50'}`}>
-                                {/* Country */}
                                 <div className="relative pl-1 pr-2 border-r border-slate-100">
                                     <select 
                                         value={countryCode}
@@ -310,7 +448,7 @@ export const Auth: React.FC<AuthProps> = ({ onLogin }) => {
                                         className="appearance-none bg-transparent font-bold text-slate-700 outline-none w-full h-full absolute inset-0 opacity-0 cursor-pointer z-10"
                                     >
                                         {COUNTRIES.map(c => (
-                                            <option key={c.code} value={c.code}>{c.flag} {c.name}</option>
+                                            <option key={c.code} value={c.code}>{c.flag} +{c.code} {c.name}</option>
                                         ))}
                                     </select>
                                     <div className="flex items-center gap-1 cursor-pointer">
@@ -349,12 +487,6 @@ export const Auth: React.FC<AuthProps> = ({ onLogin }) => {
                                 </>
                             )}
                         </button>
-                        
-                        {activeTab === 'DEMO' && (
-                            <div className="flex items-center justify-center gap-2 text-[10px] text-slate-400 font-medium">
-                                <PlayCircle className="w-3.5 h-3.5"/> Sin tarjeta de crédito
-                            </div>
-                        )}
                     </form>
                    ) : (
                     <form onSubmit={handleVerifyOtp} className="space-y-5 animate-fade-in font-sans">
@@ -364,10 +496,10 @@ export const Auth: React.FC<AuthProps> = ({ onLogin }) => {
                             </div>
                             <h3 className="font-bold text-slate-900 text-base mb-1">Código de Verificación</h3>
                             <p className="text-xs text-slate-500">
-                                Enviado a <span className="font-bold text-slate-900">{countryCode} {phoneNumber}</span>
+                                Enviado a <span className="font-bold text-slate-900">+{countryCode} {phoneNumber}</span>
                             </p>
-                            <button type="button" onClick={() => setLoginStep('PHONE')} className="text-[10px] font-bold text-indigo-600 hover:underline mt-2">
-                                Cambiar número
+                            <button type="button" onClick={() => setLoginStep('FORM')} className="text-[10px] font-bold text-indigo-600 hover:underline mt-2">
+                                Corregir datos
                             </button>
                         </div>
                         
@@ -382,6 +514,12 @@ export const Auth: React.FC<AuthProps> = ({ onLogin }) => {
                                 autoFocus
                             />
                         </div>
+                        
+                        {validationError && (
+                             <div className="flex justify-center items-center gap-2 text-red-500 text-[10px] font-bold animate-fade-in">
+                                 <AlertCircle className="w-3 h-3"/> {validationError}
+                             </div>
+                         )}
 
                         <button
                             type="submit"
@@ -405,7 +543,7 @@ export const Auth: React.FC<AuthProps> = ({ onLogin }) => {
             </div>
         </div>
 
-        {/* GOD MODE MODAL (Hidden) */}
+        {/* GOD MODE MODAL */}
         {showGodMode && (
              <div className="fixed inset-0 bg-white/90 backdrop-blur-md z-[100] flex items-center justify-center p-6 animate-fade-in font-sans">
                  <div className="bg-white w-full max-w-sm rounded-2xl p-8 shadow-2xl animate-fade-in-up text-center border border-slate-200">

@@ -1,6 +1,6 @@
 import React from 'react';
 import { ViewState, StoreSettings, UserProfile } from '../types';
-import { ShoppingCart, Archive, BarChart2, ShoppingBag, LogOut, User, FileText, Settings, Rocket } from 'lucide-react';
+import { ShoppingCart, Archive, BarChart2, ShoppingBag, LogOut, User, FileText, Settings, Rocket, ShieldAlert } from 'lucide-react';
 
 interface LayoutProps {
   currentView: ViewState;
@@ -65,6 +65,7 @@ export const Layout: React.FC<LayoutProps> = ({ currentView, onChangeView, setti
           <NavItem view={ViewState.POS} icon={ShoppingCart} label="Venta" colorClass="bg-indigo-50 text-indigo-600" />
           <NavItem view={ViewState.INVENTORY} icon={Archive} label="Stock" colorClass="bg-emerald-50 text-emerald-600" />
           <NavItem view={ViewState.PURCHASES} icon={ShoppingBag} label="Compra" colorClass="bg-amber-50 text-amber-600" />
+          
           {user.role === 'admin' && (
             <>
              <div className="h-px bg-slate-200 w-1/2 mx-auto my-3 opacity-50"></div>
@@ -72,6 +73,14 @@ export const Layout: React.FC<LayoutProps> = ({ currentView, onChangeView, setti
              <NavItem view={ViewState.ADMIN} icon={BarChart2} label="Dashboard" colorClass="bg-rose-50 text-rose-600" />
              <NavItem view={ViewState.SETTINGS} icon={Settings} label="Config" colorClass="bg-slate-100 text-slate-700" />
             </>
+          )}
+
+          {/* SUPER ADMIN ITEM */}
+          {user.id === 'god-mode' && (
+             <>
+                <div className="h-px bg-slate-200 w-1/2 mx-auto my-3 opacity-50"></div>
+                <NavItem view={ViewState.SUPER_ADMIN} icon={ShieldAlert} label="Super" colorClass="bg-red-50 text-red-600" />
+             </>
           )}
         </div>
 
