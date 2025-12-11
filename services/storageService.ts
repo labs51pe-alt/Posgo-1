@@ -1,4 +1,4 @@
-import { UserProfile, Product, Transaction, Purchase, StoreSettings, Customer, Supplier, CashShift, CashMovement } from '../types';
+import { UserProfile, Product, Transaction, Purchase, StoreSettings, Customer, Supplier, CashShift, CashMovement, Lead, Store } from '../types';
 import { MOCK_PRODUCTS, DEFAULT_SETTINGS } from '../constants';
 import { supabase } from './supabase';
 
@@ -20,7 +20,8 @@ const isDemo = () => {
     const session = localStorage.getItem(KEYS.SESSION);
     if (!session) return true;
     const user = JSON.parse(session);
-    // Demo user or explicit local-only user
+    // Demo user is ONLY the old legacy test user.
+    // New users created via Auth.tsx (even from 'Quiero Probar') are real Supabase users.
     return user.id === 'test-user-demo'; 
 };
 
@@ -55,13 +56,45 @@ export const StorageService = {
     await supabase.auth.signOut();
   },
 
+  // === SUPER ADMIN / LEADS ===
+  saveLead: async (lead: Omit<Lead, 'id' | 'created_at'>) => {
+      // Save directly to Supabase regardless of mode, if table exists
+      try {
+          const { error } = await supabase.from('leads').insert({
+              name: lead.name,
+              business_name: lead.business_name,
+              phone: lead.phone
+          });
+          if (error) console.error("Error saving lead:", error);
+      } catch (e) {
+          console.error("Supabase not configured for leads", e);
+      }
+  },
+  getLeads: async (): Promise<Lead[]> => {
+      const { data, error } = await supabase.from('leads').select('*').order('created_at', { ascending: false });
+      if (error || !data) return [];
+      return data;
+  },
+  getAllStores: async (): Promise<Store[]> => {
+      const { data, error } = await supabase.from('stores').select('*').order('created_at', { ascending: false });
+      if (error || !data) return [];
+      return data;
+  },
+  deleteStore: async (storeId: string) => {
+      // Logic to delete store or mark inactive
+      await supabase.from('stores').delete().eq('id', storeId);
+  },
+
   // === PRODUCTS ===
   getProducts: async (): Promise<Product[]> => {
     if (isDemo()) {
         const s = localStorage.getItem(KEYS.PRODUCTS);
         return s ? JSON.parse(s) : MOCK_PRODUCTS;
     } else {
-        const { data, error } = await supabase.from('products').select('*');
+        const storeId = await getStoreId();
+        if(!storeId) return []; // If real user but no store assigned yet, return empty
+
+        const { data, error } = await supabase.from('products').select('*').eq('store_id', storeId);
         if (error || !data) return [];
         return data.map((p: any) => ({
             id: p.id,
@@ -70,8 +103,8 @@ export const StorageService = {
             category: p.category,
             stock: Number(p.stock),
             barcode: p.barcode,
-            hasVariants: p.variants && p.variants.length > 0,
-            variants: p.variants || [],
+            hasVariants: false, // Logic for variants can be expanded if DB supports it
+            variants: [], // Simplified for now, or fetch from related table
             image: p.image_url
         }));
     }
@@ -90,11 +123,11 @@ export const StorageService = {
                 stock: p.stock,
                 category: p.category,
                 barcode: p.barcode,
-                variants: p.variants,
                 store_id: storeId
             };
-            if (p.id) payload.id = p.id; 
+            if (p.id && p.id.length > 10) payload.id = p.id; // Only use ID if it looks like a UUID (length check is a hack, better to check if existing)
 
+            // Upsert based on ID if present, otherwise insert
             const { error } = await supabase.from('products').upsert(payload);
             if (error) console.error('Error saving product', error);
         }
@@ -107,7 +140,10 @@ export const StorageService = {
         const s = localStorage.getItem(KEYS.TRANSACTIONS);
         return s ? JSON.parse(s) : [];
     } else {
-        const { data, error } = await supabase.from('transactions').select('*').order('date', { ascending: false });
+        const storeId = await getStoreId();
+        if(!storeId) return [];
+
+        const { data, error } = await supabase.from('transactions').select('*').eq('store_id', storeId).order('date', { ascending: false });
         if (error || !data) return [];
         return data.map((t: any) => ({
             id: t.id,
@@ -189,7 +225,9 @@ export const StorageService = {
         const s = localStorage.getItem(KEYS.CUSTOMERS);
         return s ? JSON.parse(s) : [];
     } else {
-        const { data } = await supabase.from('customers').select('*');
+        const storeId = await getStoreId();
+        if(!storeId) return [];
+        const { data } = await supabase.from('customers').select('*').eq('store_id', storeId);
         return data || [];
     }
   },
@@ -210,7 +248,9 @@ export const StorageService = {
         const s = localStorage.getItem(KEYS.SHIFTS);
         return s ? JSON.parse(s) : [];
     } else {
-        const { data } = await supabase.from('cash_shifts').select('*').order('created_at', { ascending: false });
+        const storeId = await getStoreId();
+        if(!storeId) return [];
+        const { data } = await supabase.from('cash_shifts').select('*').eq('store_id', storeId).order('created_at', { ascending: false });
         if (!data) return [];
         return data.map((s: any) => ({
             id: s.id,
@@ -256,7 +296,9 @@ export const StorageService = {
           const s = localStorage.getItem(KEYS.MOVEMENTS);
           return s ? JSON.parse(s) : [];
       } else {
-           const { data } = await supabase.from('cash_movements').select('*');
+           const storeId = await getStoreId();
+           if(!storeId) return [];
+           const { data } = await supabase.from('cash_movements').select('*').eq('store_id', storeId);
            if (!data) return [];
            return data.map((m: any) => ({
                id: m.id,
