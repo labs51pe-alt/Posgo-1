@@ -58,22 +58,31 @@ export const StorageService = {
 
   // === SUPER ADMIN / LEADS ===
   saveLead: async (lead: Omit<Lead, 'id' | 'created_at'>) => {
-      // Save directly to Supabase regardless of mode, if table exists
       try {
-          const { error } = await supabase.from('leads').insert({
+          console.log("Saving lead to Supabase:", lead);
+          const { data, error } = await supabase.from('leads').insert({
               name: lead.name,
               business_name: lead.business_name,
-              phone: lead.phone
-          });
-          if (error) console.error("Error saving lead:", error);
+              phone: lead.phone,
+              status: 'NEW'
+          }).select();
+          
+          if (error) {
+              console.error("SUPABASE ERROR SAVING LEAD:", error);
+              throw error;
+          }
+          console.log("Lead saved successfully:", data);
       } catch (e) {
-          console.error("Supabase not configured for leads", e);
+          console.error("Critical error saving lead:", e);
       }
   },
   getLeads: async (): Promise<Lead[]> => {
       const { data, error } = await supabase.from('leads').select('*').order('created_at', { ascending: false });
-      if (error || !data) return [];
-      return data;
+      if (error) {
+          console.error("Error fetching leads:", error);
+          return [];
+      }
+      return data || [];
   },
   getAllStores: async (): Promise<Store[]> => {
       const { data, error } = await supabase.from('stores').select('*').order('created_at', { ascending: false });
