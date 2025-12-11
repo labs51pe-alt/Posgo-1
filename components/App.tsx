@@ -1,20 +1,20 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { ViewState, Product, CartItem, Transaction, StoreSettings, Purchase, CashShift, CashMovement, UserProfile, Customer, Supplier } from './types';
-import { StorageService } from './services/storageService';
-import { Layout } from './components/Layout';
-import { Cart } from './components/Cart';
-import { Ticket } from './components/Ticket';
-import { Auth } from './components/Auth';
-import { AdminView } from './components/AdminView';
-import { OnboardingTour } from './components/OnboardingTour';
-import { InventoryView } from './components/InventoryView';
-import { PurchasesView } from './components/PurchasesView';
-import { ReportsView } from './components/ReportsView';
-import { SettingsView } from './components/SettingsView';
-import { CashControlModal } from './components/CashControlModal';
-import { POSView } from './components/POSView';
-import { SuperAdminView } from './components/SuperAdminView';
-import { DEFAULT_SETTINGS, CATEGORIES } from './constants';
+import { ViewState, Product, CartItem, Transaction, StoreSettings, Purchase, CashShift, CashMovement, UserProfile, Customer, Supplier } from '../types';
+import { StorageService } from '../services/storageService';
+import { Layout } from './Layout';
+import { Cart } from './Cart';
+import { Ticket } from './Ticket';
+import { Auth } from './Auth';
+import { AdminView } from './AdminView';
+import { OnboardingTour } from './OnboardingTour';
+import { InventoryView } from './InventoryView';
+import { PurchasesView } from './PurchasesView';
+import { ReportsView } from './ReportsView';
+import { SettingsView } from './SettingsView';
+import { CashControlModal } from './CashControlModal';
+import { POSView } from './POSView';
+import { SuperAdminView } from './SuperAdminView';
+import { DEFAULT_SETTINGS, CATEGORIES } from '../constants';
 import { Plus, Image as ImageIcon, X, Trash2 } from 'lucide-react';
 
 const App: React.FC = () => {
